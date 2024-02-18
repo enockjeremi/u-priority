@@ -1,5 +1,5 @@
 "use client";
-import { ErrorMessage } from "@hookform/error-message";
+import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import Link from "next/link";
@@ -11,11 +11,6 @@ type CredentialsToSignIn = {
   password: string;
 };
 
-export const esErrors = {
-  "string.empty": "Este campo es obligatorio.",
-  "string.email": "El email no es valido.",
-  "string.min": "Minimo 8 caracteres."
-};
 
 const schema = Joi.object({
   email: Joi.string()

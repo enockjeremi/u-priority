@@ -1,59 +1,117 @@
 "use client";
+import { esErrors } from "@/utils/joi-es-errors";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
 import Link from "next/link";
 import React, { FormEvent } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+const schema = Joi.object({
+  email: Joi.string()
+    .required()
+    .messages(esErrors)
+    .email({ tlds: { allow: false } }),
+  username: Joi.string().required().messages(esErrors),
+  password: Joi.string().required().min(7).messages(esErrors),
+  cpassword: Joi.any().valid(Joi.ref("password")).required().messages(esErrors),
+});
+
+type CredentialsToSignUp = {
+  email: string;
+  username: string;
+  password: string;
+  cpassword: string;
+};
 
 const SignUpComponent = () => {
-  const isLoading = false;
-  const handleChange = () => {};
-  const handleSubmit = (event: FormEvent) => {
-    event?.preventDefault();
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CredentialsToSignUp>({
+    resolver: joiResolver(schema),
+  });
+
+  const onSubmit: SubmitHandler<CredentialsToSignUp> = (data) => {};
+
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="flex w-full sm:w-[500px] flex-col space-y-3 p-4 text-sm"
       >
         <div className="flex flex-col space-y-2">
           <label htmlFor="username_label">Nombre de usuario:</label>
           <input
+            {...register("username")}
             type="text"
             id="username_label"
             name="username"
-            onChange={handleChange}
             className="rounded-md border border-gray-400 px-2 py-1"
           />
+          {errors.username && (
+            <p
+              role="alert"
+              className="text-white px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.username.message}
+            </p>
+          )}
         </div>
         <div className="flex flex-col space-y-2">
           <label htmlFor="email_label">Email:</label>
           <input
+            {...register("email")}
             id="email_label"
             type="email"
             name="email"
-            onChange={handleChange}
             className="rounded-md border border-gray-400 px-2 py-1"
           />
+          {errors.email && (
+            <p
+              role="alert"
+              className="text-white px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.email.message}
+            </p>
+          )}
         </div>
         <div className="py-1"></div>
         <div className="flex flex-col space-y-2">
           <label htmlFor="password">Contraseña:</label>
           <input
+            {...register("password")}
             id="password"
             type="password"
             className="rounded-md border border-gray-400 px-2 py-1"
             name="password"
-            onChange={handleChange}
           />
+          {errors.password && (
+            <p
+              role="alert"
+              className="text-white px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.password.message}
+            </p>
+          )}
         </div>
         <div className="flex flex-col space-y-2">
           <label htmlFor="password_confirm">Confirmar contraseña:</label>
           <input
+            {...register("cpassword")}
             id="password_confirm"
             type="password"
             className="rounded-md border border-gray-400 px-2 py-1"
             name="cpassword"
-            onChange={handleChange}
           />
+          {errors.cpassword && (
+            <p
+              role="alert"
+              className="text-white px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.cpassword.message}
+            </p>
+          )}
         </div>
         <div className="py-1"></div>
 
