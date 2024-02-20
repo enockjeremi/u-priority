@@ -1,16 +1,13 @@
 "use client";
+import { useAuth } from "@/app/client/hooks/use-auth";
+// import useSignIn from "@/app/client/hooks/useSignIn";
+import { CredentialsToSignIn } from "@/types/auth.types";
 import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import Link from "next/link";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-
-type CredentialsToSignIn = {
-  email: string;
-  password: string;
-};
-
 
 const schema = Joi.object({
   email: Joi.string()
@@ -26,9 +23,12 @@ const SignInComponent = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<CredentialsToSignIn>({ resolver: joiResolver(schema) });
-
+  const { signInMutation, user } = useAuth();
   const isLoading = false;
-  const onSubmit: SubmitHandler<CredentialsToSignIn> = (data) => {};
+  const onSubmit: SubmitHandler<CredentialsToSignIn> = (data) => {
+    const { email, password } = data;
+    signInMutation({email, password});
+  };
 
   return (
     <>
@@ -50,7 +50,14 @@ const SignInComponent = () => {
             name="email"
             className="rounded-md border border-gray-400 px-2 py-1"
           />
-          {errors.email && <p role="alert" className="text-white px-2 py-2 rounded-md bg-red-500">{errors.email.message}</p>}
+          {errors.email && (
+            <p
+              role="alert"
+              className="text-white px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.email.message}
+            </p>
+          )}
         </div>
         <div className="-full flex flex-col space-y-2">
           <label htmlFor="password_label">Contraseña:</label>
@@ -61,7 +68,14 @@ const SignInComponent = () => {
             className="rounded-md border border-gray-400 px-2 py-1"
             name="password"
           />
-          {errors.password && <p role="alert" className="text-white px-2 py-2 rounded-md bg-red-500">{errors.password.message}</p>}
+          {errors.password && (
+            <p
+              role="alert"
+              className="text-white px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.password.message}
+            </p>
+          )}
         </div>
         <div className="flex flex-col items-center justify-center space-y-1 pt-4">
           <button

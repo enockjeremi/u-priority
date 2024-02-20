@@ -1,9 +1,10 @@
 "use client";
+import { CredentialsToSignUp } from "@/types/credentials-types";
 import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import Link from "next/link";
-import React, { FormEvent } from "react";
+import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 const schema = Joi.object({
@@ -16,12 +17,6 @@ const schema = Joi.object({
   cpassword: Joi.any().valid(Joi.ref("password")).required().messages(esErrors),
 });
 
-type CredentialsToSignUp = {
-  email: string;
-  username: string;
-  password: string;
-  cpassword: string;
-};
 
 const SignUpComponent = () => {
   const {

@@ -1,0 +1,2 @@
+export const USER_TOKEN_NAME = "PRIORITY-USER-TOKEN";
+export const USER_TOKEN_EXPIRE = 2;

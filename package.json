@@ -11,11 +11,14 @@
   "dependencies": {
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.4",
+    "@types/js-cookie": "^3.0.6",
     "joi": "^17.12.1",
+    "js-cookie": "^3.0.5",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-hook-form": "^7.50.1"
+    "react-hook-form": "^7.50.1",
+    "react-query": "^3.39.3"
   },
   "devDependencies": {
     "@types/node": "^20",
