@@ -21,5 +21,8 @@ export interface User {
 
 export interface UseAuthContext {
   signInMutation: any;
-  user: any
+  signUpMutation: any;
+  user: any;
+  errors: string | null;
+  success: string | null;
 }

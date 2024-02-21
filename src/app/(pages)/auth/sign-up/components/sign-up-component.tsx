@@ -1,5 +1,6 @@
 "use client";
-import { CredentialsToSignUp } from "@/types/credentials-types";
+import { useAuth } from "@/app/client/hooks/use-auth";
+import { CredentialsToSignUp } from "@/types/auth.types";
 import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
@@ -17,8 +18,8 @@ const schema = Joi.object({
   cpassword: Joi.any().valid(Joi.ref("password")).required().messages(esErrors),
 });
 
-
 const SignUpComponent = () => {
+  const { signUpMutation, errors: signUpErrors } = useAuth();
   const {
     register,
     handleSubmit,
@@ -27,7 +28,14 @@ const SignUpComponent = () => {
     resolver: joiResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<CredentialsToSignUp> = (data) => {};
+  const onSubmit: SubmitHandler<CredentialsToSignUp> = async (data) => {
+    const body = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+    };
+    await signUpMutation(body);
+  };
 
   return (
     <>
@@ -109,7 +117,11 @@ const SignUpComponent = () => {
           )}
         </div>
         <div className="py-1"></div>
-
+        {signUpErrors && (
+          <div className="mb-4 rounded-md bg-red-500 p-3 text-center text-white">
+            {signUpErrors}
+          </div>
+        )}
         <div className="flex flex-col items-center justify-center space-y-1 pt-4">
           <button
             className={`w-full rounded-md bg-primary px-2 py-2 uppercase text-white duration-150 hover:bg-black/90`}
@@ -128,11 +140,8 @@ const SignUpComponent = () => {
             ingresar
           </Link>
         </div>
-        {/* {errors && (
-          <div className="mb-4 rounded-md bg-red-500 p-3 text-center text-white">
-            {errors}
-          </div>
-        )}
+
+        {/*
         {message && (
           <div className="rounded-md bg-red-500 p-3 text-center text-white">
             {message}

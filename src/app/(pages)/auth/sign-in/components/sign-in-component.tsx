@@ -23,11 +23,11 @@ const SignInComponent = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<CredentialsToSignIn>({ resolver: joiResolver(schema) });
-  const { signInMutation, user } = useAuth();
+  const { signInMutation, errors: signInErrors, success } = useAuth();
   const isLoading = false;
   const onSubmit: SubmitHandler<CredentialsToSignIn> = (data) => {
     const { email, password } = data;
-    signInMutation({email, password});
+    signInMutation({ email, password });
   };
 
   return (
@@ -36,11 +36,11 @@ const SignInComponent = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full sm:w-[500px] flex-col space-y-3 p-4 text-sm"
       >
-        {/* {successMessage && (
-        <div className="mb-4 rounded-md bg-green-500 p-3 text-center text-white">
-          {successMessage}
-        </div>
-      )} */}
+        {success && (
+          <div className="mb-4 rounded-md bg-green-500 p-3 text-center text-white">
+            {success}
+          </div>
+        )}
         <div className="w-full flex flex-col space-y-2">
           <label htmlFor="email_label">Email</label>
           <input
@@ -77,6 +77,11 @@ const SignInComponent = () => {
             </p>
           )}
         </div>
+        {signInErrors && (
+          <div className="mb-4 rounded-md bg-red-500 p-3 text-center text-white">
+            {signInErrors}
+          </div>
+        )}
         <div className="flex flex-col items-center justify-center space-y-1 pt-4">
           <button
             disabled={isLoading && true}
