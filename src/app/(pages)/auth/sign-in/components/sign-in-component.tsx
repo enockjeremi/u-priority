@@ -1,13 +1,14 @@
 "use client";
-import { useAuth } from "@/app/client/hooks/use-auth";
-// import useSignIn from "@/app/client/hooks/useSignIn";
-import { CredentialsToSignIn } from "@/types/auth.types";
-import { esErrors } from "@/utils/joi-es-errors";
-import { joiResolver } from "@hookform/resolvers/joi";
-import Joi from "joi";
 import Link from "next/link";
-import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import Joi from "joi";
+
+import { joiResolver } from "@hookform/resolvers/joi";
+import { esErrors } from "@/utils/joi-es-errors";
+
+import useSignIn from "@/app/client/hooks/useSignIn";
+
+import { CredentialsToSignIn } from "@/types/auth.types";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -22,8 +23,15 @@ const SignInComponent = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CredentialsToSignIn>({ resolver: joiResolver(schema) });
-  const { signInMutation, errors: signInErrors, success } = useAuth();
+  } = useForm<CredentialsToSignIn>({
+    resolver: joiResolver(schema),
+    defaultValues: {
+      email: "enockjeremi@gmail.com",
+      password: "23443069",
+    },
+  });
+
+  const { signInMutation, errors: signInErrors } = useSignIn();
   const isLoading = false;
   const onSubmit: SubmitHandler<CredentialsToSignIn> = (data) => {
     const { email, password } = data;
@@ -36,11 +44,11 @@ const SignInComponent = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full sm:w-[500px] flex-col space-y-3 p-4 text-sm"
       >
-        {success && (
+        {/* {success && (
           <div className="mb-4 rounded-md bg-green-500 p-3 text-center text-white">
             {success}
           </div>
-        )}
+        )} */}
         <div className="w-full flex flex-col space-y-2">
           <label htmlFor="email_label">Email</label>
           <input

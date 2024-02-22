@@ -1,12 +1,13 @@
 "use client";
-import { useAuth } from "@/app/client/hooks/use-auth";
-import { CredentialsToSignUp } from "@/types/auth.types";
+import Link from "next/link";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Joi from "joi";
+
 import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
-import Joi from "joi";
-import Link from "next/link";
-import React from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+
+import useSignUp from "@/app/client/hooks/useSignUp";
+import { CredentialsToSignUp } from "@/types/auth.types";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -19,7 +20,7 @@ const schema = Joi.object({
 });
 
 const SignUpComponent = () => {
-  const { signUpMutation, errors: signUpErrors } = useAuth();
+  const { signUpMutation, errors: signUpErrors } = useSignUp();
   const {
     register,
     handleSubmit,

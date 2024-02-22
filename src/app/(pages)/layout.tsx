@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
-import "./globals.css";
 import QueryClientServerProvider from "../client/context/query-client-provider";
-import { AuthenticationProvider } from "../client/hooks/use-auth";
+import type { Metadata } from "next";
+
+import { Poppins } from "next/font/google";
+import "./globals.css";
 
 const poppins = Poppins({ weight: "400", subsets: ["devanagari"] });
 
@@ -18,13 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <QueryClientServerProvider>
-      <AuthenticationProvider>
-        <html lang="es">
-          <body className={poppins.className}>
-            <div className="mx-auto h-screen text-sm md:px-0">{children}</div>
-          </body>
-        </html>
-      </AuthenticationProvider>
+      <html lang="es">
+        <body className={poppins.className}>
+          <div className="mx-auto h-screen text-sm md:px-0">{children}</div>
+        </body>
+      </html>
     </QueryClientServerProvider>
   );
 }

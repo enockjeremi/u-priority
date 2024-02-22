@@ -7,7 +7,7 @@ export type CredentialsToSignUp = {
   email: string;
   username: string;
   password: string;
-  cpassword: string;
+  cpassword?: string;
 };
 
 export interface User {
@@ -17,12 +17,4 @@ export interface User {
     id: number;
     role: string;
   };
-}
-
-export interface UseAuthContext {
-  signInMutation: any;
-  signUpMutation: any;
-  user: any;
-  errors: string | null;
-  success: string | null;
 }
