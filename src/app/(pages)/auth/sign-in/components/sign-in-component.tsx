@@ -31,13 +31,12 @@ const SignInComponent = () => {
     },
   });
 
-  const { signInMutation, errors: signInErrors } = useSignIn();
-  const isLoading = false;
+  const { signInMutation, errors: signInErrors, isLoading } = useSignIn();
   const onSubmit: SubmitHandler<CredentialsToSignIn> = (data) => {
     const { email, password } = data;
     signInMutation({ email, password });
   };
-
+  console.log(isLoading)
   return (
     <>
       <form
@@ -99,17 +98,18 @@ const SignInComponent = () => {
           >
             {isLoading ? "cargando.. " : "ingresar"}
           </button>
-          <div className="flex w-full items-center justify-between space-x-2">
-            <p className="h-0.5 w-full rounded-full border border-black/20"></p>
-            <p className="text-[12px] uppercase text-black/40">o</p>
-            <p className="h-0.5 w-full rounded-full border border-black/20"></p>
-          </div>
-          <Link
-            href={"./sign-up"}
-            className={`w-full rounded-md bg-dark px-2 py-2 text-center uppercase text-white duration-150 hover:bg-black/90`}
-          >
-            Registrar
-          </Link>
+
+          <p className="py-2 text-[12px] text-slate-500">
+            <span>¿No tienes una cuenta? </span>
+            <Link
+              href={"./sign-up"}
+              className={`hover:text-dark ${
+                isLoading ? "pointer-events-none" : ""
+              } hover:underline underline-offset-4`}
+            >
+              registrate
+            </Link>
+          </p>
         </div>
 
         {/*}

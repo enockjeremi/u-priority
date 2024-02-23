@@ -32,7 +32,7 @@ const useSignUp = () => {
   const successMessage = (message = "") => setSuccess(message);
   const errosMessage = (message = "") => setErrors(message);
 
-  const { mutate: signUpMutation } = useMutation<
+  const { mutate: signUpMutation, isLoading } = useMutation<
     User,
     unknown,
     CredentialsToSignUp,
@@ -52,6 +52,7 @@ const useSignUp = () => {
 
   return {
     signUpMutation,
+    isLoading,
     errors,
     success,
   };

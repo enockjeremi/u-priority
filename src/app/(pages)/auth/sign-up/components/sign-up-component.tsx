@@ -20,7 +20,7 @@ const schema = Joi.object({
 });
 
 const SignUpComponent = () => {
-  const { signUpMutation, errors: signUpErrors } = useSignUp();
+  const { signUpMutation, errors: signUpErrors, isLoading } = useSignUp();
   const {
     register,
     handleSubmit,
@@ -29,13 +29,13 @@ const SignUpComponent = () => {
     resolver: joiResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<CredentialsToSignUp> = async (data) => {
+  const onSubmit: SubmitHandler<CredentialsToSignUp> = (data) => {
     const body = {
       username: data.username,
       email: data.email,
       password: data.password,
     };
-    await signUpMutation(body);
+    signUpMutation(body);
   };
 
   return (
@@ -125,21 +125,25 @@ const SignUpComponent = () => {
         )}
         <div className="flex flex-col items-center justify-center space-y-1 pt-4">
           <button
-            className={`w-full rounded-md bg-primary px-2 py-2 uppercase text-white duration-150 hover:bg-black/90`}
+            disabled={isLoading && true}
+            className={`${
+              isLoading && "cursor-not-allow hover:bg-black/30"
+            } w-full rounded-md bg-primary px-2 py-2 uppercase text-white duration-150 hover:bg-black/90`}
           >
-            {"Registrar"}
+            {isLoading ? "cargando.. " : "Registrar"}
           </button>
-          <div className="flex w-full items-center justify-between space-x-2">
-            <p className="h-0.5 w-full rounded-full border border-black/20"></p>
-            <p className="text-[12px] uppercase text-black/40">o</p>
-            <p className="h-0.5 w-full rounded-full border border-black/20"></p>
-          </div>
-          <Link
-            href={"./sign-in"}
-            className={`w-full rounded-md bg-dark px-2 py-2 text-center uppercase text-white duration-150 hover:bg-black/90`}
-          >
-            ingresar
-          </Link>
+
+          <p className="py-2 text-[12px] text-slate-500">
+            <span>¿Ya tienes una cuenta? </span>
+            <Link
+              href={"./sign-in"}
+              className={`hover:text-dark ${
+                isLoading ? "pointer-events-none" : ""
+              } hover:underline underline-offset-4`}
+            >
+              inicia sesion
+            </Link>
+          </p>
         </div>
 
         {/*

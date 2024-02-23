@@ -10,7 +10,12 @@ import { ResponseError } from "@/utils/Error/response-error";
 import { auth } from "@/app/libs/endpoints/auth";
 import { User } from "@/types/auth.types";
 
-async function signIn(email: string, password: string): Promise<any> {
+async function signIn(
+  email: string,
+  password: string,
+  setIsLoading: any
+): Promise<any> {
+  setIsLoading(true);
   const response = await fetch(auth.login, {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -28,6 +33,7 @@ async function signIn(email: string, password: string): Promise<any> {
 }
 const useSignIn = () => {
   const [errors, setErrors] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const errosMessage = (message = "") => setErrors(message);
 
   const queryClient = useQueryClient();
@@ -36,7 +42,7 @@ const useSignIn = () => {
     unknown,
     { email: string; password: string },
     unknown
-  >(({ email, password }) => signIn(email, password), {
+  >(({ email, password }) => signIn(email, password, setIsLoading), {
     onSuccess: async (data) => {
       saveUserToken(data.access_token);
       queryClient.setQueryData([QUERY_KEY.user], data.user);
@@ -52,6 +58,7 @@ const useSignIn = () => {
   return {
     signInMutation,
     errors,
+    isLoading,
   };
 };
 
