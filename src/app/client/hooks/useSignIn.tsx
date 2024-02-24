@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UseMutateFunction, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
 import { navigate } from "@/app/server/actions/navigate";
 import { QUERY_KEY } from "@/app/server/constants/query-keys";

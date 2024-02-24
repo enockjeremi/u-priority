@@ -2,6 +2,7 @@
 import React, { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getSession } from "@/app/server/actions/get-session";
+import SidebarComponent from "./components/sidebar-component";
 
 const HomeLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getSession();
@@ -9,7 +10,10 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <div>
-      {children}
+      <div>
+        <SidebarComponent />
+      </div>
+      <div>{children}</div>
     </div>
   );
 };
