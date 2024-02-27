@@ -4,6 +4,7 @@ import { getUserToken } from "@/app/server/token/user-token";
 import { cookies } from "next/headers";
 
 import React from "react";
+import SpacesComponent from "./components/spaces-component";
 const getWorkspaces = async (id: number, token: any) => {
   const res = await fetch(workspaces.getBy(id), {
     headers: {
@@ -16,7 +17,7 @@ const getWorkspaces = async (id: number, token: any) => {
 const Page = async ({ params }: { params: any }) => {
   const token = cookies().get(USER_TOKEN_NAME);
   const workspaces = await getWorkspaces(params.id, token?.value);
-  return <div>{workspaces.name}</div>;
+  return <SpacesComponent workspaces={workspaces} />;
 };
 
 export default Page;
