@@ -7,7 +7,7 @@ import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 
 import useSignUp from "@/app/client/hooks/useSignUp";
-import { CredentialsToSignUp } from "@/types/auth.types";
+import { ICredentialsToSignUp } from "@/types/auth.types";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -25,11 +25,11 @@ const SignUpComponent = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CredentialsToSignUp>({
+  } = useForm<ICredentialsToSignUp>({
     resolver: joiResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<CredentialsToSignUp> = (data) => {
+  const onSubmit: SubmitHandler<ICredentialsToSignUp> = (data) => {
     const body = {
       username: data.username,
       email: data.email,

@@ -8,7 +8,7 @@ import { esErrors } from "@/utils/joi-es-errors";
 
 import useSignIn from "@/app/client/hooks/useSignIn";
 
-import { CredentialsToSignIn } from "@/types/auth.types";
+import { ICredentialsToSignIn } from "@/types/auth.types";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -23,7 +23,7 @@ const SignInComponent = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CredentialsToSignIn>({
+  } = useForm<ICredentialsToSignIn>({
     resolver: joiResolver(schema),
     defaultValues: {
       email: "enockjeremi@gmail.com",
@@ -32,7 +32,7 @@ const SignInComponent = () => {
   });
 
   const { signInMutation, errors: signInErrors, isLoading } = useSignIn();
-  const onSubmit: SubmitHandler<CredentialsToSignIn> = (data) => {
+  const onSubmit: SubmitHandler<ICredentialsToSignIn> = (data) => {
     const { email, password } = data;
     signInMutation({ email, password });
   };
