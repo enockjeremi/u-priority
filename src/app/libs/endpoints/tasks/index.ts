@@ -1,4 +1,4 @@
-import { API_URL } from "@/enviroments";
+import { API_URL } from "../../enviroments";
 
 export const tasks = {
   getAllIDs: `${API_URL}/tasks/all-ids`,

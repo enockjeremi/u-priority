@@ -10,11 +10,11 @@ export type ICredentialsToSignUp = {
   cpassword?: string;
 };
 
-// export interface IUser {
-//   access_token: string;
-//   user: {
-//     email: string;
-//     id: number;
-//     role: string;
-//   };
-// }
+export interface IUser {
+  access_token: string;
+  user: {
+    email: string;
+    id: number;
+    role: string;
+  };
+}

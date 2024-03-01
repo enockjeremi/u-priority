@@ -8,7 +8,7 @@ import { saveUserToken } from "@/app/server/token/user-token";
 import { ResponseError } from "@/utils/Error/response-error";
 
 import { auth } from "@/app/libs/endpoints/auth";
-import { User } from "@/types/auth.types";
+import { IUser } from "@/types/auth.types";
 
 async function signIn(
   email: string,
@@ -38,7 +38,7 @@ const useSignIn = () => {
 
   const queryClient = useQueryClient();
   const { mutate: signInMutation } = useMutation<
-    User,
+    IUser,
     unknown,
     { email: string; password: string },
     unknown
@@ -49,6 +49,7 @@ const useSignIn = () => {
       navigate("/");
     },
     onError: (error) => {
+      setIsLoading(false);
       if (error instanceof ResponseError) {
         errosMessage(error.message);
       }

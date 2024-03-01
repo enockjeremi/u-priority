@@ -13,7 +13,7 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
       <div>
         <SidebarComponent />
       </div>
-      <div>{children}</div>
+      <div className="p-2">{children}</div>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 
 import useSignUp from "@/app/client/hooks/useSignUp";
 import { ICredentialsToSignUp } from "@/types/auth.types";
+import { Input, Typography } from "@material-tailwind/react";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -45,13 +46,10 @@ const SignUpComponent = () => {
         className="flex w-full sm:w-[500px] flex-col space-y-3 p-4 text-sm"
       >
         <div className="flex flex-col space-y-2">
-          <label htmlFor="username_label">Nombre de usuario:</label>
-          <input
+          <Input
             {...register("username")}
-            type="text"
-            id="username_label"
-            name="username"
-            className="rounded-md border border-gray-400 px-2 py-1"
+            label="Nombre de usuario"
+            crossOrigin={undefined}
           />
           {errors.username && (
             <p
@@ -63,14 +61,12 @@ const SignUpComponent = () => {
           )}
         </div>
         <div className="flex flex-col space-y-2">
-          <label htmlFor="email_label">Email:</label>
-          <input
+          <Input
             {...register("email")}
-            id="email_label"
-            type="email"
-            name="email"
-            className="rounded-md border border-gray-400 px-2 py-1"
+            label="Correo electronico"
+            crossOrigin={undefined}
           />
+
           {errors.email && (
             <p
               role="alert"
@@ -82,13 +78,11 @@ const SignUpComponent = () => {
         </div>
         <div className="py-1"></div>
         <div className="flex flex-col space-y-2">
-          <label htmlFor="password">Contraseña:</label>
-          <input
+          <Input
             {...register("password")}
-            id="password"
+            label="Contraseña"
             type="password"
-            className="rounded-md border border-gray-400 px-2 py-1"
-            name="password"
+            crossOrigin={undefined}
           />
           {errors.password && (
             <p
@@ -100,13 +94,11 @@ const SignUpComponent = () => {
           )}
         </div>
         <div className="flex flex-col space-y-2">
-          <label htmlFor="password_confirm">Confirmar contraseña:</label>
-          <input
+          <Input
             {...register("cpassword")}
-            id="password_confirm"
+            label="Confirmar contraseña"
             type="password"
-            className="rounded-md border border-gray-400 px-2 py-1"
-            name="cpassword"
+            crossOrigin={undefined}
           />
           {errors.cpassword && (
             <p

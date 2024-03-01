@@ -1,3 +1,5 @@
+import { API_URL } from "../../enviroments";
+
 export const status = {
-  getAll: "/status",
+  getAll: `${API_URL}/status/`,
 };

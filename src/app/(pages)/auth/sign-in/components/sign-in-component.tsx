@@ -9,6 +9,7 @@ import { esErrors } from "@/utils/joi-es-errors";
 import useSignIn from "@/app/client/hooks/useSignIn";
 
 import { ICredentialsToSignIn } from "@/types/auth.types";
+import { Input } from "@material-tailwind/react";
 
 const schema = Joi.object({
   email: Joi.string()
@@ -49,14 +50,14 @@ const SignInComponent = () => {
           </div>
         )} */}
         <div className="w-full flex flex-col space-y-2">
-          <label htmlFor="email_label">Email</label>
-          <input
+          <Input {...register("email")} label="Email" crossOrigin={undefined} />
+          {/* <input
             {...register("email")}
             id="email_label"
             type="text"
             name="email"
             className="rounded-md border border-gray-400 px-2 py-1"
-          />
+          /> */}
           {errors.email && (
             <p
               role="alert"
@@ -67,14 +68,8 @@ const SignInComponent = () => {
           )}
         </div>
         <div className="-full flex flex-col space-y-2">
-          <label htmlFor="password_label">Contraseña:</label>
-          <input
-            {...register("password")}
-            id="password_label"
-            type="password"
-            className="rounded-md border border-gray-400 px-2 py-1"
-            name="password"
-          />
+          <Input {...register("password")} type="password" label="Contraseña" crossOrigin={undefined} />
+
           {errors.password && (
             <p
               role="alert"
