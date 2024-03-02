@@ -5,30 +5,35 @@ import { cookies } from "next/headers";
 import React from "react";
 import SpacesComponent from "./components/spaces-component";
 import { status } from "@/app/libs/endpoints/status";
+import axios from "axios";
 
 const getAllStatus = async (token: any) => {
-  const res = await fetch(status.getAll, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
+  const res = await axios
+    .get(status.getAll, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => res.data);
   return res;
 };
 
 const getWorkspaces = async (id: number, token: any) => {
-  const res = await fetch(workspaces.getBy(id), {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
+  const res = await axios
+    .get(workspaces.getBy(id), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => res.data);
   return res;
 };
 
 const Page = async ({ params }: { params: any }) => {
-  const token = cookies().get(USER_TOKEN_NAME);
+  const token = cookies().get(USER_TOKEN_NAME)?.value;
 
-  const workspaces = await getWorkspaces(params.id, token?.value);
-  const statusList = await getAllStatus(token?.value);
+  const workspaces = await getWorkspaces(params.id, token);
+  const statusList = await getAllStatus(token);
 
   return <SpacesComponent workspaces={workspaces} statusList={statusList} />;
 };

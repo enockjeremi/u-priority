@@ -1,6 +1,8 @@
 "use client";
-import { workspaces } from "@/app/libs/endpoints/workspaces";
+import { status } from "@/app/libs/endpoints/status";
+import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
 import { getUserToken } from "@/app/server/token/user-token";
+import instance from "@/app/server/utils/axios-instance";
 import { IStatus, IWorkspaces } from "@/types/workspaces";
 import {
   Card,
@@ -14,19 +16,6 @@ import {
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 
-const fetchWorkspacesByStatus = async (
-  workspacesId: number,
-  statusId: number,
-  token: any
-) => {
-  const res = await fetch(workspaces.filterByStatus(workspacesId, statusId), {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
-  return res;
-};
-
 const TABLE_HEAD = ["Nombre", "Estado"];
 
 const SpacesComponent = ({
@@ -36,7 +25,7 @@ const SpacesComponent = ({
   workspaces: IWorkspaces;
   statusList: IStatus[];
 }) => {
-  const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(1);
+  const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
   const queryClient = useQueryClient();
   const token = getUserToken();
   const workspacesId = workspaces.id;
@@ -46,9 +35,19 @@ const SpacesComponent = ({
       "tasksByStatusInWorkspaces",
       { token, workspacesId, selectTasksByStatus },
     ],
-    queryFn: async () =>
-      await fetchWorkspacesByStatus(workspacesId, selectTasksByStatus, token),
+    queryFn: async () => {
+      if (selectTasksByStatus !== 0) {
+        return await instance
+          .get(
+            workSpacesEndpoint.filterByStatus(workspacesId, selectTasksByStatus)
+          )
+          .then((res) => res.data);
+      } else {
+        return workspaces;
+      }
+    },
   });
+
 
   const handleSelectStatusChange = (value: any) => {
     setSelectTasksByStatus(Number(value));
@@ -58,7 +57,12 @@ const SpacesComponent = ({
   return (
     <div className="w-full pt-10">
       <div className="w-full flex flex-col gap-4">
-        <Typography className="ml-2" placeholder={undefined} variant="h5" color="blue-gray">
+        <Typography
+          className="ml-2"
+          placeholder={undefined}
+          variant="h5"
+          color="blue-gray"
+        >
           {workspaces.name}
         </Typography>
         <div className="pt-2">
@@ -67,6 +71,7 @@ const SpacesComponent = ({
             label="Selecciona por estado"
             placeholder={"Selecciona un estado"}
           >
+            <Option value="0">Todas las tareas</Option>
             {statusList?.map((item) => (
               <Option key={item.id} value={item.id.toString()}>
                 {item.status}
@@ -115,7 +120,7 @@ const SpacesComponent = ({
                   </td>
                 </tr>
               ) : (
-                data?.tasks.map(({ id, name, status }, index) => {
+                data?.tasks?.map(({ id, name, status }, index) => {
                   const isLast = index === data?.tasks?.length - 1;
                   const classes = isLast
                     ? "p-4"
