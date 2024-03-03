@@ -1,13 +1,10 @@
 "use client";
-import { status } from "@/app/libs/endpoints/status";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
-import { getUserToken } from "@/app/server/token/user-token";
 import instance from "@/app/server/utils/axios-instance";
 import { IStatus, IWorkspaces } from "@/types/workspaces";
 import {
   Card,
   CardBody,
-  CardHeader,
   Chip,
   Option,
   Select,
@@ -25,29 +22,25 @@ const SpacesComponent = ({
   workspaces: IWorkspaces;
   statusList: IStatus[];
 }) => {
-  const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
   const queryClient = useQueryClient();
-  const token = getUserToken();
-  const workspacesId = workspaces.id;
+  const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
+
+  const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
+  const { id: spacesID } = workspaces;
 
   const { data, isLoading } = useQuery<IWorkspaces>({
-    queryKey: [
-      "tasksByStatusInWorkspaces",
-      { token, workspacesId, selectTasksByStatus },
-    ],
+    queryKey: ["tasksByStatusInWorkspaces", { spacesID, selectTasksByStatus }],
     queryFn: async () => {
-      if (selectTasksByStatus !== 0) {
-        return await instance
-          .get(
-            workSpacesEndpoint.filterByStatus(workspacesId, selectTasksByStatus)
-          )
-          .then((res) => res.data);
-      } else {
-        return workspaces;
-      }
+      return await instance
+        .get(workSpacesEndpoint.filterByStatus(spacesID, selectTasksByStatus))
+        .then((res) => res.data);
     },
+    enabled: selectTasksByStatus !== 0,
   });
 
+  const taskList = selectTasksByStatus !== 0 ? data : workspaces;
+  const taskListEmpty =
+    taskList?.tasks?.length !== undefined ? taskList.tasks.length > 0 : false;
 
   const handleSelectStatusChange = (value: any) => {
     setSelectTasksByStatus(Number(value));
@@ -71,8 +64,7 @@ const SpacesComponent = ({
             label="Selecciona por estado"
             placeholder={"Selecciona un estado"}
           >
-            <Option value="0">Todas las tareas</Option>
-            {statusList?.map((item) => (
+            {allStatusList?.map((item) => (
               <Option key={item.id} value={item.id.toString()}>
                 {item.status}
               </Option>
@@ -119,13 +111,12 @@ const SpacesComponent = ({
                     </div>
                   </td>
                 </tr>
-              ) : (
-                data?.tasks?.map(({ id, name, status }, index) => {
-                  const isLast = index === data?.tasks?.length - 1;
+              ) : taskListEmpty ? (
+                taskList?.tasks?.map(({ id, name, status }, index) => {
+                  const isLast = index === taskList?.tasks?.length - 1;
                   const classes = isLast
                     ? "p-4"
                     : "p-4 border-b border-blue-gray-50";
-
                   return (
                     <tr key={id}>
                       <td className={classes}>
@@ -162,6 +153,21 @@ const SpacesComponent = ({
                     </tr>
                   );
                 })
+              ) : (
+                <tr>
+                  <td className="pt-5 pl-4 pr-4">
+                    <div className="flex items-center gap-3">
+                      <Typography
+                        placeholder={undefined}
+                        variant="small"
+                        color="blue-gray"
+                        className="font-bold"
+                      >
+                        Aun no has asignado ninguna tarea...
+                      </Typography>
+                    </div>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
