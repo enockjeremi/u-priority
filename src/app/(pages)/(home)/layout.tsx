@@ -9,11 +9,11 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
   if (!session) redirect("/auth/sign-in");
 
   return (
-    <div>
+    <div className="">
       <div>
         <SidebarComponent />
       </div>
-      <div className="p-2">{children}</div>
+      <div className="p-2 ">{children}</div>
     </div>
   );
 };

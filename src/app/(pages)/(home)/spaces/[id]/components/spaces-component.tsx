@@ -1,17 +1,23 @@
 "use client";
+import React, { useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
-import instance from "@/app/server/utils/axios-instance";
-import { IStatus, IWorkspaces } from "@/types/workspaces";
+import { IStatus, ITask, IWorkspaces } from "@/types/workspaces";
+
 import {
   Card,
   CardBody,
   Chip,
   Option,
   Select,
+  Spinner,
   Typography,
 } from "@material-tailwind/react";
-import React, { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+
+import instance from "@/app/server/utils/axios-instance";
+import { BackArrowIcon } from "@/app/client/components/icons/back-arrow-icon";
+import PencilPlusIcon from "@/app/client/components/icons/pencil-plus-icon";
+import SideInfoTasksComponent from "./side-info-tasks-component";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
 
@@ -24,6 +30,10 @@ const SpacesComponent = ({
 }) => {
   const queryClient = useQueryClient();
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
+  const [toggleTasksInfo, setToggleTasksInfo] = useState(false);
+  const [toggleInputEditInfo, setToggleInputEditInfo] = useState(false);
+
+  const [tasksInfo, setTasksInfo] = useState<ITask>();
 
   const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
   const { id: spacesID } = workspaces;
@@ -48,7 +58,7 @@ const SpacesComponent = ({
   };
 
   return (
-    <div className="w-full pt-10">
+    <div className="w-full pt-10 ">
       <div className="w-full flex flex-col gap-4">
         <Typography
           className="ml-2"
@@ -71,6 +81,29 @@ const SpacesComponent = ({
             ))}
           </Select>
         </div>
+      </div>
+
+      <div
+        className={`${
+          toggleTasksInfo ? "translate-x-0" : "-translate-x-full"
+        } duration-300 transition-all w-full h-full overflow-hidden bg-dark fixed z-20 top-0 right-0`}
+      >
+        <button
+          onClick={() => setToggleTasksInfo(!toggleTasksInfo)}
+          className={`text-white duration-200 hover:scale-125 absolute z-20 right-3 top-3 p-1`}
+        >
+          <BackArrowIcon className="w-6" />
+        </button>
+        <button
+          onClick={() => setToggleInputEditInfo(!toggleInputEditInfo)}
+          className="absolute z-20 right-14 duration-200 hover:scale-125  text-white top-3 p-1"
+        >
+          <PencilPlusIcon className="w-6" />
+        </button>
+        <SideInfoTasksComponent
+          tasksInfo={tasksInfo}
+          isEdit={toggleInputEditInfo}
+        />
       </div>
 
       <Card placeholder={undefined}>
@@ -99,36 +132,36 @@ const SpacesComponent = ({
               {isLoading ? (
                 <tr>
                   <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <Typography
-                        placeholder={undefined}
-                        variant="small"
-                        color="blue-gray"
-                        className="font-bold"
-                      >
-                        cargando...
-                      </Typography>
+                    <div className="flex justify-center w-full items-center gap-3">
+                      <Spinner />
                     </div>
                   </td>
                 </tr>
               ) : taskListEmpty ? (
-                taskList?.tasks?.map(({ id, name, status }, index) => {
+                taskList?.tasks?.map((item, index) => {
                   const isLast = index === taskList?.tasks?.length - 1;
                   const classes = isLast
                     ? "p-4"
                     : "p-4 border-b border-blue-gray-50";
                   return (
-                    <tr key={id}>
+                    <tr key={item.id}>
                       <td className={classes}>
                         <div className="flex items-center gap-3">
-                          <Typography
-                            placeholder={undefined}
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold"
+                          <button
+                            onClick={() => {
+                              setTasksInfo(item);
+                              setToggleTasksInfo(!toggleTasksInfo);
+                            }}
                           >
-                            {name}
-                          </Typography>
+                            <Typography
+                              placeholder={undefined}
+                              variant="small"
+                              color="blue-gray"
+                              className="font-bold"
+                            >
+                              {item.name}
+                            </Typography>
+                          </button>
                         </div>
                       </td>
 
@@ -137,13 +170,13 @@ const SpacesComponent = ({
                           <Chip
                             size="sm"
                             variant="ghost"
-                            value={status.status}
+                            value={item.status.status}
                             color={
-                              status.id === 1
+                              item.status.id === 1
                                 ? "green"
-                                : status.id === 2
+                                : item.status.id === 2
                                 ? "blue"
-                                : status.id === 3
+                                : item.status.id === 3
                                 ? "amber"
                                 : "red"
                             }
