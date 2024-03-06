@@ -6,19 +6,19 @@ export interface IWorkspaces {
   }
   
   export interface ITask {
-    id: number;
-    name: string;
-    description: string;
+    id?: number;
+    name?: string;
+    description?: string;
     status: IStatus;
     priority: IPriority;
   }
   
   export interface IPriority {
-    id: number;
-    priority: string;
+    id?: number;
+    priority?: string;
   }
   
   export interface IStatus {
-    id: number;
-    status: string;
+    id?: number;
+    status?: string;
   }

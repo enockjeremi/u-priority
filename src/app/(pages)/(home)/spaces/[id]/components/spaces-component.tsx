@@ -75,7 +75,7 @@ const SpacesComponent = ({
             placeholder={"Selecciona un estado"}
           >
             {allStatusList?.map((item) => (
-              <Option key={item.id} value={item.id.toString()}>
+              <Option key={item.id} value={item?.id?.toString()}>
                 {item.status}
               </Option>
             ))}
@@ -95,7 +95,7 @@ const SpacesComponent = ({
           <BackArrowIcon className="w-6" />
         </button>
         <button
-          onClick={() => setToggleInputEditInfo(!toggleInputEditInfo)}
+          onDoubleClick={() => setToggleInputEditInfo(!toggleInputEditInfo)}
           className="absolute z-20 right-14 duration-200 hover:scale-125  text-white top-3 p-1"
         >
           <PencilPlusIcon className="w-6" />
@@ -170,13 +170,13 @@ const SpacesComponent = ({
                           <Chip
                             size="sm"
                             variant="ghost"
-                            value={item.status.status}
+                            value={item?.status?.status}
                             color={
-                              item.status.id === 1
+                              item?.status?.id === 1
                                 ? "green"
-                                : item.status.id === 2
+                                : item?.status?.id === 2
                                 ? "blue"
-                                : item.status.id === 3
+                                : item?.status?.id === 3
                                 ? "amber"
                                 : "red"
                             }
