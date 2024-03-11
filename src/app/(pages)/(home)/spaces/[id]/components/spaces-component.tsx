@@ -31,7 +31,7 @@ const SpacesComponent = ({
   const queryClient = useQueryClient();
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
   const [toggleTasksInfo, setToggleTasksInfo] = useState(false);
-  const [toggleInputEditInfo, setToggleInputEditInfo] = useState(false);
+  const [toggleEditTasks, setToggleEditTasks] = useState(false);
 
   const [tasksInfo, setTasksInfo] = useState<ITask>();
 
@@ -45,10 +45,9 @@ const SpacesComponent = ({
         .get(workSpacesEndpoint.filterByStatus(spacesID, selectTasksByStatus))
         .then((res) => res.data);
     },
-    enabled: selectTasksByStatus !== 0,
   });
 
-  const taskList = selectTasksByStatus !== 0 ? data : workspaces;
+  const taskList = data;
   const taskListEmpty =
     taskList?.tasks?.length !== undefined ? taskList.tasks.length > 0 : false;
 
@@ -57,8 +56,16 @@ const SpacesComponent = ({
     queryClient.invalidateQueries("tasksByStatusInWorkspaces");
   };
 
+  const stringlent = (strg: string | undefined) => {
+    if(!strg) return ""
+    if (strg.length > 17) {
+      return strg.substring(0, 17) + "...";
+    }
+    return strg;
+  };
+
   return (
-    <div className="w-full pt-10 ">
+    <div className="w-full pt-10">
       <div className="w-full flex flex-col gap-4">
         <Typography
           className="ml-2"
@@ -86,23 +93,26 @@ const SpacesComponent = ({
       <div
         className={`${
           toggleTasksInfo ? "translate-x-0" : "-translate-x-full"
-        } duration-300 transition-all w-full h-full overflow-hidden bg-dark fixed z-20 top-0 right-0`}
+        } duration-300 transition-all w-full h-full overflow-hidden bg-white fixed z-20 top-0 right-0`}
       >
         <button
-          onClick={() => setToggleTasksInfo(!toggleTasksInfo)}
-          className={`text-white duration-200 hover:scale-125 absolute z-20 right-3 top-3 p-1`}
+          onClick={() => {
+            setToggleTasksInfo(!toggleTasksInfo);
+            setToggleEditTasks(false);
+          }}
+          className={`text-black duration-200 hover:scale-125 absolute z-20 right-3 top-3 p-1`}
         >
           <BackArrowIcon className="w-6" />
         </button>
         <button
-          onDoubleClick={() => setToggleInputEditInfo(!toggleInputEditInfo)}
-          className="absolute z-20 right-14 duration-200 hover:scale-125  text-white top-3 p-1"
+          onClick={() => setToggleEditTasks(!toggleEditTasks)}
+          className="absolute z-20 right-14 duration-200 hover:scale-125  text-black top-3 p-1"
         >
           <PencilPlusIcon className="w-6" />
         </button>
         <SideInfoTasksComponent
-          tasksInfo={tasksInfo}
-          isEdit={toggleInputEditInfo}
+          tasksId={tasksInfo?.id}
+          isEdit={toggleEditTasks}
         />
       </div>
 
@@ -159,7 +169,7 @@ const SpacesComponent = ({
                               color="blue-gray"
                               className="font-bold"
                             >
-                              {item.name}
+                              {stringlent(item.name)}
                             </Typography>
                           </button>
                         </div>
