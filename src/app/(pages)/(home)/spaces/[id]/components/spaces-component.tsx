@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
 import { IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 
@@ -18,8 +18,15 @@ import instance from "@/app/server/utils/axios-instance";
 import { BackArrowIcon } from "@/app/client/components/icons/back-arrow-icon";
 import PencilPlusIcon from "@/app/client/components/icons/pencil-plus-icon";
 import SideInfoTasksComponent from "./side-info-tasks-component";
+import TrashIcon from "@/app/client/components/icons/trash-icon";
+import { tasks } from "@/app/libs/endpoints/tasks";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
+
+const deleteTasks = (tasksId: number | undefined) => {
+  const res = instance.delete(tasks.deleteTasks(tasksId));
+  return res;
+};
 
 const SpacesComponent = ({
   workspaces,
@@ -29,6 +36,11 @@ const SpacesComponent = ({
   statusList: IStatus[];
 }) => {
   const queryClient = useQueryClient();
+
+  const mutation = useMutation((id: number | undefined) => {
+    return instance.delete(tasks.deleteTasks(id));
+  });
+
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
   const [toggleTasksInfo, setToggleTasksInfo] = useState(false);
   const [toggleEditTasks, setToggleEditTasks] = useState(false);
@@ -56,12 +68,25 @@ const SpacesComponent = ({
     queryClient.invalidateQueries("tasksByStatusInWorkspaces");
   };
 
+  //Remover o mejorar
   const stringlent = (strg: string | undefined) => {
-    if(!strg) return ""
+    if (!strg) return "";
     if (strg.length > 17) {
       return strg.substring(0, 17) + "...";
     }
     return strg;
+  };
+
+  const handleClickRemoveTasks = (tasksId: number | undefined) => {
+    mutation.mutate(tasksId, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["tasks"]);
+        queryClient.invalidateQueries(["tasksByStatusInWorkspaces"]);
+        setToggleTasksInfo(false);
+        setToggleEditTasks(false);
+        console.log(data);
+      },
+    });
   };
 
   return (
@@ -95,6 +120,7 @@ const SpacesComponent = ({
           toggleTasksInfo ? "translate-x-0" : "-translate-x-full"
         } duration-300 transition-all w-full h-full overflow-hidden bg-white fixed z-20 top-0 right-0`}
       >
+        {/* Button Back */}
         <button
           onClick={() => {
             setToggleTasksInfo(!toggleTasksInfo);
@@ -104,11 +130,21 @@ const SpacesComponent = ({
         >
           <BackArrowIcon className="w-6" />
         </button>
+
+        {/* Button Edit */}
         <button
           onClick={() => setToggleEditTasks(!toggleEditTasks)}
           className="absolute z-20 right-14 duration-200 hover:scale-125  text-black top-3 p-1"
         >
           <PencilPlusIcon className="w-6" />
+        </button>
+
+        {/* Button Delete */}
+        <button
+          onClick={() => handleClickRemoveTasks(tasksInfo?.id)}
+          className="absolute z-20 left-3 duration-200 hover:scale-110  text-black top-3 p-1"
+        >
+          <TrashIcon className="w-6" />
         </button>
         <SideInfoTasksComponent
           tasksId={tasksInfo?.id}

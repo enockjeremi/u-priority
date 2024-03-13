@@ -3,6 +3,7 @@ import React, { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getSession } from "@/app/server/actions/get-session";
 import SidebarComponent from "./components/sidebar-component";
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomeLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getSession();

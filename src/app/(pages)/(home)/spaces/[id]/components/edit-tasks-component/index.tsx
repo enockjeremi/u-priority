@@ -1,6 +1,8 @@
 import { tasks } from "@/app/libs/endpoints/tasks";
 import instance from "@/app/server/utils/axios-instance";
 import { ITask } from "@/types/workspaces";
+import { esErrors } from "@/utils/joi-es-errors";
+import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
   Input,
@@ -10,9 +12,11 @@ import {
   Textarea,
   Typography,
 } from "@material-tailwind/react";
+import Joi, { string } from "joi";
 import React, { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
 const statusList = [
   { id: 1, status: "Completado" },
@@ -35,42 +39,81 @@ type FormValues = {
   priorityid: string | undefined;
 };
 
-const postData = (id: number | undefined, body: FormValues) => {
+const schema = Joi.object({
+  name: Joi.string().required().messages(esErrors),
+  description: Joi.string().required().messages(esErrors),
+  statusid: Joi.number().required(),
+  priorityid: Joi.number().required(),
+});
+
+const putTask = (id: number | undefined, body: FormValues) => {
   const res = instance.put(tasks.updateTasks(id), body);
   return res;
 };
 
 const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
-  const { control, register, handleSubmit } = useForm({
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       name: taskToEdit.name,
       description: taskToEdit.description,
       statusid: taskToEdit.status.id?.toString(),
       priorityid: taskToEdit.priority.id?.toString(),
     },
+    resolver: joiResolver(schema),
   });
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const mutation = useMutation((data: any) => {
-    return postData(taskToEdit?.id, data);
+    return putTask(taskToEdit?.id, data);
   });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     const { name, description, statusid, priorityid } = data;
-    mutation.mutate({name, description, statusid, priorityid}, {
-      onSuccess: () => {
-        queryClient.invalidateQueries('tasksByStatusInWorkspaces')
-        queryClient.invalidateQueries('tasks')
-      }, 
-      onError: (error) => {
-        console.log('error: ', error)
+    mutation.mutate(
+      { name, description, statusid, priorityid },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries("tasksByStatusInWorkspaces");
+          queryClient.invalidateQueries("tasks");
+          notify();
+        },
+        onError: (error) => {
+          console.log("error: ", error);
+        },
       }
-    })
+    );
   };
+
+  const notify = () =>
+    toast.success("Tarea modificada!", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   return (
-    <div className="w-full p-6 mt-14 flex flex-col gap-4">
+    <div className="w-full p-6 mt-4 flex flex-col gap-4">
+      <ToastContainer />
+      <Typography
+        placeholder={undefined}
+        variant="h3"
+        color="black"
+        className="font-normal leading-none"
+      >
+        Actualizando tarea
+      </Typography>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col w-full gap-8"
+        className="flex flex-col w-full gap-8 mt-4"
       >
         <div className="w-full">
           <Input
@@ -78,6 +121,14 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
             {...register("name")}
             label="Nombre de la tarea"
           />
+          {errors.name && (
+            <p
+              role="alert"
+              className="text-white mt-2 px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.name.message}
+            </p>
+          )}
         </div>
         <div className="w-full">
           <Textarea
@@ -86,6 +137,14 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
             {...register("description")}
             label="Descripcion de la tarea"
           />
+          {errors.description && (
+            <p
+              role="alert"
+              className="text-white mt-1 px-2 py-2 rounded-md bg-red-500"
+            >
+              {errors.description.message}
+            </p>
+          )}
         </div>
         <div className="w-full flex flex-col gap-4 items-center">
           <Controller
@@ -95,7 +154,7 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
               <Select
                 {...field}
                 size="md"
-                value={taskToEdit.status.status}
+                defaultValue={taskToEdit.status.status}
                 placeholder={undefined}
                 label="Estado"
               >
@@ -113,7 +172,7 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
             render={({ field }) => (
               <Select
                 {...field}
-                value={taskToEdit.priority.priority}
+                defaultValue={taskToEdit.priority.priority}
                 label="Prioridad"
                 size="md"
                 placeholder={undefined}
@@ -127,8 +186,19 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
             )}
           />
         </div>
-        <Button type="submit" className="w-full flex items-center justify-center" disabled={mutation.isLoading && true} color="green" size="md" placeholder={undefined}>
-          {mutation.isLoading ? <Spinner className="h-4 w-4 text-gray-900/10" /> : "Guardar Cambios"}
+        <Button
+          type="submit"
+          className="w-full flex items-center justify-center"
+          disabled={mutation.isLoading && true}
+          color="green"
+          size="md"
+          placeholder={undefined}
+        >
+          {mutation.isLoading ? (
+            <Spinner className="h-4 w-4 text-gray-900/10" />
+          ) : (
+            "Guardar Cambios"
+          )}
         </Button>
       </form>
     </div>

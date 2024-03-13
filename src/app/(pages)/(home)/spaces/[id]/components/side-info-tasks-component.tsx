@@ -1,7 +1,5 @@
 "use client";
-import { ITask } from "@/types/workspaces";
 import { Chip, Typography } from "@material-tailwind/react";
-import React, { useState } from "react";
 import EditTasksComponent from "./edit-tasks-component";
 import { useQuery } from "react-query";
 import { tasks } from "@/app/libs/endpoints/tasks";

@@ -19,4 +19,9 @@ export const tasks = {
     taskId: number | string,
     priorityId: number | string | undefined
   ) => `${API_URL}/tasks/${taskId}/priority/${priorityId}`,
+
+  deleteTasks: (
+    taskId: number | undefined,
+  ) => `${API_URL}/tasks/${taskId}/`,
+
 };
