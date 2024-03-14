@@ -79,7 +79,7 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
         onSuccess: () => {
           queryClient.invalidateQueries("tasksByStatusInWorkspaces");
           queryClient.invalidateQueries("tasks");
-          notify();
+          notifyUpdateTasks();
         },
         onError: (error) => {
           console.log("error: ", error);
@@ -88,7 +88,7 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
     );
   };
 
-  const notify = () =>
+  const notifyUpdateTasks = () =>
     toast.success("Tarea modificada!", {
       position: "bottom-right",
       autoClose: 2000,
@@ -99,10 +99,12 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
       progress: undefined,
       theme: "light",
       transition: Bounce,
+      containerId: "NotifyUpdateTasks" 
     });
+
   return (
     <div className="w-full p-6 mt-4 flex flex-col gap-4">
-      <ToastContainer />
+      <ToastContainer containerId={'NotifyUpdateTasks'} />
       <Typography
         placeholder={undefined}
         variant="h3"

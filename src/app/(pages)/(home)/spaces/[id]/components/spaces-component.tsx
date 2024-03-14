@@ -20,13 +20,9 @@ import PencilPlusIcon from "@/app/client/components/icons/pencil-plus-icon";
 import SideInfoTasksComponent from "./side-info-tasks-component";
 import TrashIcon from "@/app/client/components/icons/trash-icon";
 import { tasks } from "@/app/libs/endpoints/tasks";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
-
-const deleteTasks = (tasksId: number | undefined) => {
-  const res = instance.delete(tasks.deleteTasks(tasksId));
-  return res;
-};
 
 const SpacesComponent = ({
   workspaces,
@@ -37,15 +33,20 @@ const SpacesComponent = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation((id: number | undefined) => {
-    return instance.delete(tasks.deleteTasks(id));
-  });
+  const mutation = useMutation(
+    (id: number | undefined) => {
+      return instance.delete(tasks.deleteTasks(id)).then((res) => res.data);
+    },
+    {
+      retry: 0,
+    }
+  );
 
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
   const [toggleTasksInfo, setToggleTasksInfo] = useState(false);
   const [toggleEditTasks, setToggleEditTasks] = useState(false);
 
-  const [tasksInfo, setTasksInfo] = useState<ITask>();
+  const [tasksInfo, setTasksInfo] = useState<ITask | null>();
 
   const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
   const { id: spacesID } = workspaces;
@@ -79,18 +80,35 @@ const SpacesComponent = ({
 
   const handleClickRemoveTasks = (tasksId: number | undefined) => {
     mutation.mutate(tasksId, {
-      onSuccess: (data) => {
-        queryClient.invalidateQueries(["tasks"]);
+      onSuccess: () => {
         queryClient.invalidateQueries(["tasksByStatusInWorkspaces"]);
+        setTasksInfo(null);
         setToggleTasksInfo(false);
-        setToggleEditTasks(false);
-        console.log(data);
+        notifyDeleteTasks();
       },
     });
   };
 
+  const notifyDeleteTasks = () =>
+    toast.success(
+      "Tarea eliminada!",
+      {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        containerId: "NotifyDeleteTasks" 
+      },
+    );
+
   return (
     <div className="w-full pt-10">
+      <ToastContainer containerId={'NotifyDeleteTasks'} />
       <div className="w-full flex flex-col gap-4">
         <Typography
           className="ml-2"
@@ -125,6 +143,7 @@ const SpacesComponent = ({
           onClick={() => {
             setToggleTasksInfo(!toggleTasksInfo);
             setToggleEditTasks(false);
+            setTasksInfo(undefined);
           }}
           className={`text-black duration-200 hover:scale-125 absolute z-20 right-3 top-3 p-1`}
         >
@@ -146,10 +165,12 @@ const SpacesComponent = ({
         >
           <TrashIcon className="w-6" />
         </button>
-        <SideInfoTasksComponent
-          tasksId={tasksInfo?.id}
-          isEdit={toggleEditTasks}
-        />
+        {tasksInfo ? (
+          <SideInfoTasksComponent
+            tasksId={tasksInfo?.id}
+            isEdit={toggleEditTasks}
+          />
+        ) : null}
       </div>
 
       <Card placeholder={undefined}>

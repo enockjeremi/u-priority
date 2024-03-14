@@ -19,11 +19,10 @@ const SideInfoTasksComponent = ({
   isEdit: boolean;
 }) => {
   const id = tasksId;
-  const { data: tasksInfo } = useQuery({
-    queryKey: ["tasks", { id }],
-    queryFn: () => getTasksById(id),
+  const { data: tasksInfo } = useQuery(["tasks", id], () => getTasksById(id), {
+    enabled: id !== undefined,
+    retry: 0,
   });
-
 
   return (
     <>
