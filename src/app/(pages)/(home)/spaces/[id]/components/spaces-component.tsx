@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
 import { IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 
 import {
+  Button,
   Card,
   CardBody,
   Chip,
@@ -32,14 +33,15 @@ const SpacesComponent = ({
   statusList: IStatus[];
 }) => {
   const queryClient = useQueryClient();
+  const toastId = useRef<any>(null);
 
   const mutation = useMutation(
-    (id: number | undefined) => {
-      return instance.delete(tasks.deleteTasks(id)).then((res) => res.data);
+    async (id: number | undefined) => {
+      return await instance
+        .delete(tasks.deleteTasks(id))
+        .then((res) => res.data);
     },
-    {
-      retry: 0,
-    }
+    { retry: 0 }
   );
 
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
@@ -78,37 +80,93 @@ const SpacesComponent = ({
     return strg;
   };
 
-  const handleClickRemoveTasks = (tasksId: number | undefined) => {
+  const handleClickDeleteTask = (tasksId: number | undefined) => {
     mutation.mutate(tasksId, {
       onSuccess: () => {
         queryClient.invalidateQueries(["tasksByStatusInWorkspaces"]);
         setTasksInfo(null);
         setToggleTasksInfo(false);
-        notifyDeleteTasks();
+        notifyTaskDeletedSuccessfully();
+      },
+      onError: () => {
+        notifyTaskDeletedError();
       },
     });
   };
 
-  const notifyDeleteTasks = () =>
-    toast.success(
-      "Tarea eliminada!",
-      {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-        containerId: "NotifyDeleteTasks" 
-      },
+  const notifyTaskDeletedError = () =>
+    toast.error("No se a podido eliminar la tarea.", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      containerId: "NotifyDeleteSuccessTasks",
+    });
+
+  const notifyTaskDeletedSuccessfully = () =>
+    toast.success("Tarea eliminada!", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      containerId: "NotifyDeleteSuccessTasks",
+    });
+
+  const notifyToConfirmToDeleteTask = () => {
+    toast(<NotifyToConfirmTaskDeletion />, {
+      position: "bottom-right",
+      autoClose: false,
+      closeButton: false,
+      closeOnClick: false,
+      draggable: false,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      containerId: "NotifyOnConfimTasks",
+      toastId: "NotifyOnConfimTasks",
+    });
+  };
+
+  const NotifyToConfirmTaskDeletion = ({ closeToast }: any) => {
+    return (
+      <div className="flex justify-center items-center gap-4">
+        <Button
+          placeholder={undefined}
+          onClick={() => closeToast()}
+          size="sm"
+          color="red"
+        >
+          Cancelar
+        </Button>
+        <Button
+          placeholder={undefined}
+          onClick={() => {
+            handleClickDeleteTask(tasksInfo?.id);
+            closeToast();
+          }}
+          size="sm"
+          color="green"
+        >
+          Confirmar
+        </Button>
+      </div>
     );
+  };
 
   return (
     <div className="w-full pt-10">
-      <ToastContainer containerId={'NotifyDeleteTasks'} />
+      <ToastContainer containerId={"NotifyOnConfimTasks"} />
+      <ToastContainer containerId={"NotifyDeleteSuccessTasks"} />
       <div className="w-full flex flex-col gap-4">
         <Typography
           className="ml-2"
@@ -160,7 +218,11 @@ const SpacesComponent = ({
 
         {/* Button Delete */}
         <button
-          onClick={() => handleClickRemoveTasks(tasksInfo?.id)}
+          onClick={() => {
+            if (!toast.isActive(toastId.current)) {
+              notifyToConfirmToDeleteTask();
+            }
+          }}
           className="absolute z-20 left-3 duration-200 hover:scale-110  text-black top-3 p-1"
         >
           <TrashIcon className="w-6" />
