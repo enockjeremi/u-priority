@@ -90,7 +90,7 @@ const SidebarComponent = () => {
       <div
         className={`${
           toggle ? "translate-y-0" : "-translate-y-full"
-        } duration-300 transition-all w-full h-full absolute z-10 bg-dark`}
+        } duration-300 transition-all w-full min-h-full absolute z-10 bg-dark`}
       >
         <ul className="w-full py-14 px-4">
           <li>
@@ -133,7 +133,11 @@ const SidebarComponent = () => {
                     mutation.isLoading && "pointer-events-none"
                   } bg-primary py-2 text-white duration-100 hover:bg-extradark hover:text-white`}
                 >
-                  <PlusIcon className={`${mutation.isLoading && 'rotate-180'}  transition-all duration-1000`} />
+                  <PlusIcon
+                    className={`${
+                      mutation.isLoading && "rotate-180"
+                    }  transition-all duration-1000`}
+                  />
                 </button>
               </form>
             </li>

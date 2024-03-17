@@ -1,5 +1,5 @@
 "use client";
-import { Chip, Typography } from "@material-tailwind/react";
+import { Chip, Spinner, Typography } from "@material-tailwind/react";
 import EditTasksComponent from "./edit-tasks-component";
 import { useQuery } from "react-query";
 import { tasks } from "@/app/libs/endpoints/tasks";
@@ -19,52 +19,62 @@ const SideInfoTasksComponent = ({
   isEdit: boolean;
 }) => {
   const id = tasksId;
-  const { data: tasksInfo } = useQuery(["tasks", id], () => getTasksById(id), {
-    enabled: id !== undefined,
-    retry: 0,
-  });
+  const { data: tasksInfo, isLoading } = useQuery(
+    ["tasks", id],
+    () => getTasksById(id),
+    {
+      enabled: id !== undefined,
+      retry: 0,
+    }
+  );
 
   return (
     <>
-      <div className="w-full">
-        {!isEdit ? (
-          <div className="w-full p-6 mt-10 flex flex-col gap-4">
-            <Typography
-              placeholder={undefined}
-              variant="h3"
-              color="black"
-              className="font-normal leading-none"
-            >
-              {tasksInfo?.name || ""}
-            </Typography>
+      {isLoading ? (
+        <div className="w-full flex h-[50vh] items-center justify-center">
+          <Spinner className="h-8 w-8"  />
+        </div>
+      ) : (
+        <div className="w-full">
+          {!isEdit ? (
+            <div className="w-full h-full p-6 mt-10 flex flex-col gap-4">
+              <Typography
+                placeholder={undefined}
+                variant="h3"
+                color="black"
+                className="font-normal leading-none"
+              >
+                {tasksInfo?.name || ""}
+              </Typography>
 
-            <div className="w-full">
-              <div className="min-h-[100px] pt-5 text-black">
-                {tasksInfo?.description}
+              <div className="w-full">
+                <div className="min-h-[100px] pt-5 text-black">
+                  {tasksInfo?.description}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <Chip size="md" value={tasksInfo?.status.status || ""} />
+                <Chip
+                  size="md"
+                  value={tasksInfo?.priority.priority || ""}
+                  color={
+                    tasksInfo?.priority.id === 1
+                      ? "green"
+                      : tasksInfo?.priority.id === 2
+                      ? "blue"
+                      : tasksInfo?.priority.id === 3
+                      ? "amber"
+                      : "red"
+                  }
+                />
               </div>
             </div>
-
-            <div className="flex justify-between items-center">
-              <Chip size="md" value={tasksInfo?.status.status || ""} />
-              <Chip
-                size="md"
-                value={tasksInfo?.priority.priority || ""}
-                color={
-                  tasksInfo?.priority.id === 1
-                    ? "green"
-                    : tasksInfo?.priority.id === 2
-                    ? "blue"
-                    : tasksInfo?.priority.id === 3
-                    ? "amber"
-                    : "red"
-                }
-              />
-            </div>
-          </div>
-        ) : (
-          <EditTasksComponent taskToEdit={tasksInfo} />
-        )}
-      </div>
+          ) : (
+            <EditTasksComponent taskToEdit={tasksInfo} />
+          )}
+        </div>
+      )}
     </>
   );
 };
