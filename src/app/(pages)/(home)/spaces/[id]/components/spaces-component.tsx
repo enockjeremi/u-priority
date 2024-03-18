@@ -164,7 +164,7 @@ const SpacesComponent = ({
   };
 
   return (
-    <div className="w-full pt-10">
+    <div className="w-full pt-6">
       <ToastContainer containerId={"NotifyOnConfimTasks"} />
       <ToastContainer containerId={"NotifyDeleteSuccessTasks"} />
       <div className="w-full flex flex-col gap-4">
@@ -176,7 +176,7 @@ const SpacesComponent = ({
         >
           {workspaces.name}
         </Typography>
-        <div className="pt-2">
+        <div className="pt-2 px-2">
           <Select
             onChange={handleSelectStatusChange}
             label="Selecciona por estado"

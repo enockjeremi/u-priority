@@ -4,32 +4,27 @@ import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import Joi from "joi";
 import { joiResolver } from "@hookform/resolvers/joi";
-import Cookies from "js-cookie";
 
 import { workspaces as workspaces_endpoints } from "@/app/libs/endpoints/workspaces";
 
 import { CopyPlusIcon } from "@/app/client/components/icons/copy-plus-icon";
-import { ListDetailsIcon } from "@/app/client/components/icons/list-details-icon";
-import { NavbarCollapseIcon } from "@/app/client/components/icons/navbar-collapse-icon";
-import { NavbarExpandIcon } from "@/app/client/components/icons/navbar-expand-icon";
 import { StackIcon } from "@/app/client/components/icons/stack-icon";
 import { PlusIcon } from "@/app/client/components/icons/plus-icon";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getUserToken } from "@/app/server/token/user-token";
+import {
+  Collapse,
+  IconButton,
+  Navbar,
+  Typography,
+} from "@material-tailwind/react";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import instance from "@/app/server/utils/axios-instance";
 
 interface IWorkspaces {
   id?: string;
   name: string;
 }
-
-const fetchWorkspaces = async (token: any) => {
-  const res = await fetch(workspaces_endpoints.getAll, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((res) => res.json());
-  return res;
-};
 
 const schema = Joi.object({
   name: Joi.string().min(4).required(),
@@ -42,121 +37,210 @@ const SidebarComponent = () => {
     reset,
     formState: { errors },
   } = useForm<IWorkspaces>({ resolver: joiResolver(schema) });
-  const [toggle, setToggle] = useState<boolean>(false);
+
+  const [openNav, setOpenNav] = React.useState(false);
+  const handleWindowResize = () =>
+    window.innerWidth >= 960 && setOpenNav(false);
+
+  React.useEffect(() => {
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
+
   const [toggleInputAddWorkspaces, setToggleInputAddWorkspaces] =
     useState<boolean>(false);
 
   const token = getUserToken();
   const queryClient = useQueryClient();
   const mutation = useMutation((formData: any) => {
-    return fetch(workspaces_endpoints.create, formData);
+    return instance.post(workspaces_endpoints.create, formData);
   });
 
   const { data: workspaces_list } = useQuery<IWorkspaces[]>({
     queryKey: ["workspaces", token],
-    queryFn: async () => await fetchWorkspaces(token),
+    queryFn: async () =>
+      await instance.get(workspaces_endpoints.getAll).then((res) => res.data),
   });
 
   const onSubmit: SubmitHandler<IWorkspaces> = (data) => {
     mutation.mutate(
+      { name: data.name },
       {
-        method: "POST",
-        body: JSON.stringify({ name: data.name }),
-        headers: {
-          Accept: "*",
-          Authorization: `Bearer ${token}`,
-          "Content-type": "application/json",
+        onSuccess: () => {
+          queryClient.invalidateQueries("workspaces");
+          notifyAddWorkspacesSuccessfully();
         },
-      },
-      { onSuccess: () => queryClient.invalidateQueries("workspaces") }
+        onError: () => {
+          notifyAddWorkspacesError();
+        },
+      }
     );
     reset();
   };
 
+  const notifyAddWorkspacesSuccessfully = () =>
+    toast.success("Nuevo proyecto agregado!", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      containerId: "NotifyAddWorkspacesSuccessfully",
+    });
+
+  const notifyAddWorkspacesError = () =>
+    toast.error("No se pudo agragar el proyecto!", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+      containerId: "NotifyAddWorkspacesError",
+    });
+
+    const clickToOenNav = () => setOpenNav(!openNav)
+
+  const navList = (
+    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="flex items-center gap-x-2 p-1 font-medium"
+        placeholder={undefined}
+      >
+        <Link onClick={clickToOenNav} href={"/"}>Inicio</Link>
+      </Typography>
+      <Typography
+        placeholder={undefined}
+        variant="small"
+        color="blue-gray"
+        className="flex items-center gap-x-2 p-1 font-medium"
+      >
+        <span>Proyectos en desarrollo</span>
+        <CopyPlusIcon
+          onClick={() => setToggleInputAddWorkspaces(!toggleInputAddWorkspaces)}
+          className="w-5 cursor-pointer"
+        />
+      </Typography>
+      <Typography placeholder={undefined} as="li">
+        <form
+          className={`pb-4 ${
+            toggleInputAddWorkspaces ? "flex" : "hidden"
+          } duration-150 transition-all`}
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <input
+            {...register("name")}
+            className={`text-dark ${
+              errors.name ? "bg-red-300" : "bg-white"
+            } border border- rounded-y-md rounded-l-md w-full flex items-center  px-1 py-2 focus:outline-none`}
+          />
+          <button
+            className={`rounded-md rounded-l-none ${
+              errors.name ? "bgblack-red-500" : "bg-primary"
+            } ${
+              mutation.isLoading && "pointer-events-none"
+            } bg-primary py-2 text-white duration-100 hover:bg-extradark hover:text-white`}
+          >
+            <PlusIcon
+              className={`${
+                mutation.isLoading && "rotate-180"
+              }  transition-all duration-1000`}
+            />
+          </button>
+        </form>
+      </Typography>
+
+      {workspaces_list?.map((item) => (
+        <Typography
+          as="li"
+          key={item.id}
+          variant="small"
+          color="blue-gray"
+          className="flex items-center gap-x-2 p-1 font-medium"
+          placeholder={undefined}
+        >
+          <StackIcon className="w-5" />
+          <Link onClick={clickToOenNav} href={`/spaces/${item.id}`}>{item.name}</Link>
+        </Typography>
+      ))}
+    </ul>
+  );
+
   return (
-    <nav className="w-full text-white">
-      <button
-        onClick={() => setToggle(!toggle)}
-        className={`${
-          toggle ? "text-white" : "text-black"
-        } duration-200 absolute z-20 right-3 top-3 p-1`}
+    <>
+      <ToastContainer containerId={"NotifyAddWorkspacesSuccessfully"} />
+      <ToastContainer containerId={"NotifyAddWorkspacesError"} />
+      <Navbar
+        className="mx-auto max-w-screen-xl px-6 py-3"
+        placeholder={undefined}
       >
-        {toggle ? (
-          <NavbarCollapseIcon className="w-6" />
-        ) : (
-          <NavbarExpandIcon className="w-6" />
-        )}
-      </button>
-      <div
-        className={`${
-          toggle ? "translate-y-0" : "-translate-y-full"
-        } duration-300 transition-all w-full min-h-full absolute z-10 bg-dark`}
-      >
-        <ul className="w-full py-14 px-4">
-          <li>
-            <Link
-              onClick={() => setToggle(!toggle)}
-              href={"/"}
-              className="flex items-center space-x-1"
-            >
-              <ListDetailsIcon className="w-5" />
-              <span>Resumen</span>
-            </Link>
-          </li>
-          <ul className="flex flex-col mt-3 space-y-2">
-            <li className="text-md py-2 my-4 px-3 border-y border-white border-dashed space-x-3 flex items-center">
-              <span>Projectos en desarrollo</span>
-              <CopyPlusIcon
-                onClick={() =>
-                  setToggleInputAddWorkspaces(!toggleInputAddWorkspaces)
-                }
-                className="w-5 cursor-pointer"
-              />
-            </li>
-            <li>
-              <form
-                className={`pb-4 ${
-                  toggleInputAddWorkspaces ? "flex" : "hidden"
-                } duration-150 transition-all`}
-                onSubmit={handleSubmit(onSubmit)}
+        <div className="flex items-center justify-between text-blue-gray-900">
+          <Typography
+            as="a"
+            href="#"
+            variant="h6"
+            className="mr-4 cursor-pointer py-1.5"
+            placeholder={undefined}
+          >
+            Material Tailwind
+          </Typography>
+          <div className="hidden lg:block">{navList}</div>
+          <IconButton
+            variant="text"
+            className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+            ripple={false}
+            onClick={() => setOpenNav(!openNav)}
+            placeholder={undefined}
+          >
+            {openNav ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
               >
-                <input
-                  {...register("name")}
-                  className={`text-dark ${
-                    errors.name ? "bg-red-300" : "bg-white"
-                  } rounded-y-md rounded-l-md w-full flex items-center  px-1 py-2 focus:outline-none`}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
                 />
-                <button
-                  className={`rounded-md rounded-l-none ${
-                    errors.name ? "bg-red-500" : "bg-primary"
-                  } ${
-                    mutation.isLoading && "pointer-events-none"
-                  } bg-primary py-2 text-white duration-100 hover:bg-extradark hover:text-white`}
-                >
-                  <PlusIcon
-                    className={`${
-                      mutation.isLoading && "rotate-180"
-                    }  transition-all duration-1000`}
-                  />
-                </button>
-              </form>
-            </li>
-            {workspaces_list?.map((item) => (
-              <li key={item.id}>
-                <Link
-                  onClick={() => setToggle(!toggle)}
-                  className="p-2 flex items-center space-x-2 bg-extradark rounded-md hover:bg-primary "
-                  href={`/spaces/${item.id}`}
-                >
-                  <StackIcon className="w-5" />
-                  <span>{item.name}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </ul>
-      </div>
-    </nav>
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            )}
+          </IconButton>
+        </div>
+        <Collapse open={openNav}>{navList}</Collapse>
+      </Navbar>
+    </>
   );
 };
 
