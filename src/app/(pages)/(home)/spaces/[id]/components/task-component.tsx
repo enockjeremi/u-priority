@@ -1,6 +1,6 @@
 "use client";
 import { Chip, Spinner, Typography } from "@material-tailwind/react";
-import EditTasksComponent from "./edit-tasks-component";
+import EditTaskComponent from "./edit-task-component";
 import { useQuery } from "react-query";
 import { tasks } from "@/app/libs/endpoints/tasks";
 import instance from "@/app/server/utils/axios-instance";
@@ -11,7 +11,7 @@ const getTasksById = (id: number | undefined) => {
   return res;
 };
 
-const SideInfoTasksComponent = ({
+const TasksComponent = ({
   tasksId,
   isEdit,
 }: {
@@ -71,7 +71,7 @@ const SideInfoTasksComponent = ({
               </div>
             </div>
           ) : (
-            <EditTasksComponent taskToEdit={tasksInfo} />
+            <EditTaskComponent taskToEdit={tasksInfo} />
           )}
         </div>
       )}
@@ -79,4 +79,4 @@ const SideInfoTasksComponent = ({
   );
 };
 
-export default SideInfoTasksComponent;
+export default TasksComponent;

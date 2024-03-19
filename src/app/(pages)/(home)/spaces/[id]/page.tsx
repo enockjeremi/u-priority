@@ -3,7 +3,7 @@ import { USER_TOKEN_NAME } from "@/app/server/constants/user-token";
 import { cookies } from "next/headers";
 
 import React from "react";
-import SpacesComponent from "./components/spaces-component";
+import WorkspacesComponent from "./components/workspaces-component";
 import { status } from "@/app/libs/endpoints/status";
 import axios from "axios";
 
@@ -35,7 +35,7 @@ const Page = async ({ params }: { params: any }) => {
   const workspaces = await getWorkspaces(params.id, token);
   const statusList = await getAllStatus(token);
 
-  return <SpacesComponent workspaces={workspaces} statusList={statusList} />;
+  return <WorkspacesComponent workspaces={workspaces} statusList={statusList} />;
 };
 
 export default Page;

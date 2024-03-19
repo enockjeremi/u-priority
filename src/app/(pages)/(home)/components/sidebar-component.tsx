@@ -20,6 +20,7 @@ import {
 } from "@material-tailwind/react";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import instance from "@/app/server/utils/axios-instance";
+import BasicLogo from "@/app/client/components/basic-logo";
 
 interface IWorkspaces {
   id?: string;
@@ -195,7 +196,7 @@ const SidebarComponent = () => {
             className="mr-4 cursor-pointer py-1.5"
             placeholder={undefined}
           >
-            Material Tailwind
+            <BasicLogo />
           </Typography>
           <div className="hidden lg:block">{navList}</div>
           <IconButton

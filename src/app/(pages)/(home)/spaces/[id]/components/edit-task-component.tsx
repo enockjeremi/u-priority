@@ -1,4 +1,5 @@
 import { tasks } from "@/app/libs/endpoints/tasks";
+import { notifyUpdateTasks } from "@/app/libs/react-toastify";
 import instance from "@/app/server/utils/axios-instance";
 import { ITask } from "@/types/workspaces";
 import { esErrors } from "@/utils/joi-es-errors";
@@ -51,7 +52,7 @@ const putTask = (id: number | undefined, body: FormValues) => {
   return res;
 };
 
-const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
+const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
   const {
     control,
     register,
@@ -88,19 +89,7 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
     );
   };
 
-  const notifyUpdateTasks = () =>
-    toast.success("Tarea modificada!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-      containerId: "NotifyUpdateTasks" 
-    });
+
 
   return (
     <div className="w-full p-6 mt-4 flex flex-col gap-4">
@@ -207,4 +196,4 @@ const EditTasksComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
   );
 };
 
-export default EditTasksComponent;
+export default EditTaskComponent;
