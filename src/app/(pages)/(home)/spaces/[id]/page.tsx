@@ -6,10 +6,22 @@ import React from "react";
 import WorkspacesComponent from "./components/workspaces-component";
 import { status } from "@/app/libs/endpoints/status";
 import axios from "axios";
+import { priority } from "@/app/libs/endpoints/priority";
 
 const getAllStatus = async (token: any) => {
   const res = await axios
     .get(status.getAll, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((res) => res.data);
+  return res;
+};
+
+const getAllPriority = async (token: any) => {
+  const res = await axios
+    .get(priority.getAll, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -34,8 +46,15 @@ const Page = async ({ params }: { params: any }) => {
 
   const workspaces = await getWorkspaces(params.id, token);
   const statusList = await getAllStatus(token);
+  const priorityList = await getAllPriority(token);
 
-  return <WorkspacesComponent workspaces={workspaces} statusList={statusList} />;
+  return (
+    <WorkspacesComponent
+      workspaces={workspaces}
+      statusList={statusList}
+      priorityList={priorityList}
+    />
+  );
 };
 
 export default Page;

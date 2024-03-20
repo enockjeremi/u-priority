@@ -9,14 +9,9 @@ import {
   CardBody,
   Chip,
   Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  Input,
   Option,
   Select,
   Spinner,
-  Textarea,
   Typography,
 } from "@material-tailwind/react";
 
@@ -27,7 +22,7 @@ import {
 } from "@/app/libs/react-toastify";
 
 import TasksComponent from "./task-component";
-import { IStatus, ITask, IWorkspaces } from "@/types/workspaces";
+import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 
 import instance from "@/app/server/utils/axios-instance";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
@@ -36,15 +31,18 @@ import { tasks } from "@/app/libs/endpoints/tasks";
 import { BackArrowIcon } from "@/app/client/components/icons/back-arrow-icon";
 import PencilPlusIcon from "@/app/client/components/icons/pencil-plus-icon";
 import TrashIcon from "@/app/client/components/icons/trash-icon";
+import CreateTaskForm from "./create-task-form";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
 
 const SpacesComponent = ({
   workspaces,
   statusList,
+  priorityList,
 }: {
   workspaces: IWorkspaces;
   statusList: IStatus[];
+  priorityList: IPriority[];
 }) => {
   const queryClient = useQueryClient();
   const toastId = useRef<any>(null);
@@ -322,36 +320,11 @@ const SpacesComponent = ({
         open={dialogAddTask}
         handler={handleClickAddTask}
       >
-        <DialogHeader className="" placeholder={undefined}>
-          Agregar nueva tarea
-        </DialogHeader>
-        <form>
-          <DialogBody placeholder={undefined}>
-            <div className="flex flex-col gap-4">
-              <Input crossOrigin={undefined} label="Nombre" />
-              <Textarea label="Descripcion" />
-            </div>
-          </DialogBody>
-          <DialogFooter placeholder={undefined}>
-            <Button
-              variant="text"
-              color="red"
-              onClick={handleClickAddTask}
-              className="mr-1"
-              placeholder={undefined}
-            >
-              <span>Cancel</span>
-            </Button>
-            <Button
-              variant="gradient"
-              color="green"
-              onClick={handleClickAddTask}
-              placeholder={undefined}
-            >
-              <span>Confirm</span>
-            </Button>
-          </DialogFooter>
-        </form>
+        <CreateTaskForm
+          statusList={statusList}
+          priorityList={priorityList}
+          handleClickCancel={handleClickAddTask}
+        />
       </Dialog>
     </>
   );

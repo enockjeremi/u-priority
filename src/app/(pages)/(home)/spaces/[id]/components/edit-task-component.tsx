@@ -1,8 +1,8 @@
 import { tasks } from "@/app/libs/endpoints/tasks";
+import { schemaEditTask } from "@/app/libs/joi/schemas";
 import { notifyUpdateTasks } from "@/app/libs/react-toastify";
 import instance from "@/app/server/utils/axios-instance";
 import { ITask } from "@/types/workspaces";
-import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
@@ -13,11 +13,10 @@ import {
   Textarea,
   Typography,
 } from "@material-tailwind/react";
-import Joi, { string } from "joi";
-import React, { useState } from "react";
+import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { Bounce, ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 const statusList = [
   { id: 1, status: "Completado" },
@@ -40,13 +39,6 @@ type FormValues = {
   priorityid: string | undefined;
 };
 
-const schema = Joi.object({
-  name: Joi.string().required().messages(esErrors),
-  description: Joi.string().required().messages(esErrors),
-  statusid: Joi.number().required(),
-  priorityid: Joi.number().required(),
-});
-
 const putTask = (id: number | undefined, body: FormValues) => {
   const res = instance.put(tasks.updateTasks(id), body);
   return res;
@@ -65,7 +57,7 @@ const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
       statusid: taskToEdit.status.id?.toString(),
       priorityid: taskToEdit.priority.id?.toString(),
     },
-    resolver: joiResolver(schema),
+    resolver: joiResolver(schemaEditTask),
   });
   const queryClient = useQueryClient();
   const mutation = useMutation((data: any) => {
@@ -89,11 +81,9 @@ const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
     );
   };
 
-
-
   return (
     <div className="w-full p-6 mt-4 flex flex-col gap-4">
-      <ToastContainer containerId={'NotifyUpdateTasks'} />
+      <ToastContainer containerId={"NotifyUpdateTasks"} />
       <Typography
         placeholder={undefined}
         variant="h3"

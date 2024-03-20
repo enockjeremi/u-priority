@@ -10,14 +10,7 @@ import useSignIn from "@/app/client/hooks/useSignIn";
 
 import { ICredentialsToSignIn } from "@/types/auth.types";
 import { Input } from "@material-tailwind/react";
-
-const schema = Joi.object({
-  email: Joi.string()
-    .required()
-    .messages(esErrors)
-    .email({ tlds: { allow: false } }),
-  password: Joi.string().required().min(7).messages(esErrors),
-});
+import { schemaSignIn } from "@/app/libs/joi/schemas";
 
 const SignInComponent = () => {
   const {
@@ -25,7 +18,7 @@ const SignInComponent = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ICredentialsToSignIn>({
-    resolver: joiResolver(schema),
+    resolver: joiResolver(schemaSignIn),
     defaultValues: {
       email: "enockjeremi@gmail.com",
       password: "23443069",

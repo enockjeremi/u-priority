@@ -1,24 +1,13 @@
 "use client";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Joi from "joi";
 
-import { esErrors } from "@/utils/joi-es-errors";
 import { joiResolver } from "@hookform/resolvers/joi";
 
 import useSignUp from "@/app/client/hooks/useSignUp";
 import { ICredentialsToSignUp } from "@/types/auth.types";
-import { Input, Typography } from "@material-tailwind/react";
-
-const schema = Joi.object({
-  email: Joi.string()
-    .required()
-    .messages(esErrors)
-    .email({ tlds: { allow: false } }),
-  username: Joi.string().required().messages(esErrors),
-  password: Joi.string().required().min(7).messages(esErrors),
-  cpassword: Joi.any().valid(Joi.ref("password")).required().messages(esErrors),
-});
+import { Input } from "@material-tailwind/react";
+import { schemaSignUp } from "@/app/libs/joi/schemas";
 
 const SignUpComponent = () => {
   const { signUpMutation, errors: signUpErrors, isLoading } = useSignUp();
@@ -27,7 +16,7 @@ const SignUpComponent = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ICredentialsToSignUp>({
-    resolver: joiResolver(schema),
+    resolver: joiResolver(schemaSignUp),
   });
 
   const onSubmit: SubmitHandler<ICredentialsToSignUp> = (data) => {
