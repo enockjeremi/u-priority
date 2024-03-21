@@ -3,7 +3,7 @@ import { API_URL } from "../../enviroments";
 export const tasks = {
   getAllIDs: `${API_URL}/tasks/all-ids`,
   getStatusAndPriorityList: `${API_URL}/tasks/status-priority`,
-  createTask: `${API_URL}/tasks`,
+  createTask: `${API_URL}/tasks/`,
   updateTasks: (id: number | undefined) => `${API_URL}/tasks/${id}`,
   getAllByStatus: (workspaces: number | undefined) =>
     `${API_URL}/tasks/all-status/${workspaces}`,

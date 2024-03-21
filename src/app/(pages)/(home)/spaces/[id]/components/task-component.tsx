@@ -4,6 +4,7 @@ import EditTaskComponent from "./edit-task-component";
 import { useQuery } from "react-query";
 import { tasks } from "@/app/libs/endpoints/tasks";
 import instance from "@/app/server/utils/axios-instance";
+import { IPriority, IStatus } from "@/types/workspaces";
 
 const getTasksById = (id: number | undefined) => {
   if (!id) return null;
@@ -14,9 +15,13 @@ const getTasksById = (id: number | undefined) => {
 const TasksComponent = ({
   tasksId,
   isEdit,
+  statusList,
+  priorityList,
 }: {
   tasksId: number | undefined;
   isEdit: boolean;
+  statusList: IStatus[];
+  priorityList: IPriority[];
 }) => {
   const id = tasksId;
   const { data: tasksInfo, isLoading } = useQuery(
@@ -32,7 +37,7 @@ const TasksComponent = ({
     <>
       {isLoading ? (
         <div className="w-full flex h-[50vh] items-center justify-center">
-          <Spinner className="h-8 w-8"  />
+          <Spinner className="h-8 w-8" />
         </div>
       ) : (
         <div className="w-full">
@@ -71,7 +76,11 @@ const TasksComponent = ({
               </div>
             </div>
           ) : (
-            <EditTaskComponent taskToEdit={tasksInfo} />
+            <EditTaskComponent
+              statusList={statusList}
+              priorityList={priorityList}
+              taskToEdit={tasksInfo}
+            />
           )}
         </div>
       )}

@@ -57,3 +57,33 @@ export const notifyToConfirmToDeleteTask = (Node: ReactNode) => {
     toastId: "NotifyOnConfimTasks",
   });
 };
+
+export const notifyCreateTaskSuccessfully= () => {
+  toast.success("Tarea creada exitosamente!.", {
+    position: "bottom-right",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,
+    containerId: "NotifyOnCreateTaskSuccess",
+  });
+};
+
+export const notifyCreateTaskError= () => {
+  toast.error("No se a podido crear la tarea.", {
+    position: "bottom-right",
+    autoClose: 2000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+    transition: Bounce,
+    containerId: "NotifyOnCreateTaskError",
+  });
+};

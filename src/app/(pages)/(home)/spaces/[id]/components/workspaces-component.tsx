@@ -137,6 +137,7 @@ const SpacesComponent = ({
 
   return (
     <>
+      <ToastContainer containerId="NotifyOnCreateTaskSuccess" />
       <div
         className={`${
           toggleTasksInfo ? "translate-x-0" : "-translate-x-full"
@@ -174,7 +175,7 @@ const SpacesComponent = ({
           <TrashIcon className="w-6" />
         </button>
         {tasksInfo ? (
-          <TasksComponent tasksId={tasksInfo?.id} isEdit={toggleEditTasks} />
+          <TasksComponent tasksId={tasksInfo?.id} isEdit={toggleEditTasks} statusList={statusList} priorityList={priorityList} />
         ) : null}
       </div>
 
@@ -323,6 +324,7 @@ const SpacesComponent = ({
         <CreateTaskForm
           statusList={statusList}
           priorityList={priorityList}
+          workspacesid={workspaces.id}
           handleClickCancel={handleClickAddTask}
         />
       </Dialog>

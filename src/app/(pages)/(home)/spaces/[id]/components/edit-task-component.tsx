@@ -2,7 +2,7 @@ import { tasks } from "@/app/libs/endpoints/tasks";
 import { schemaEditTask } from "@/app/libs/joi/schemas";
 import { notifyUpdateTasks } from "@/app/libs/react-toastify";
 import instance from "@/app/server/utils/axios-instance";
-import { ITask } from "@/types/workspaces";
+import { IPriority, IStatus, ITask } from "@/types/workspaces";
 import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
@@ -18,20 +18,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { ToastContainer } from "react-toastify";
 
-const statusList = [
-  { id: 1, status: "Completado" },
-  { id: 2, status: "En desarrollo" },
-  { id: 3, status: "Pendiente" },
-  { id: 4, status: "Pausado" },
-];
-
-const priorityList = [
-  { id: 1, priority: "A" },
-  { id: 2, priority: "B" },
-  { id: 3, priority: "C" },
-  { id: 4, priority: "D" },
-];
-
 type FormValues = {
   name: string | undefined;
   description: string | undefined;
@@ -44,7 +30,15 @@ const putTask = (id: number | undefined, body: FormValues) => {
   return res;
 };
 
-const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
+const EditTaskComponent = ({
+  taskToEdit,
+  statusList,
+  priorityList,
+}: {
+  taskToEdit: ITask;
+  statusList: IStatus[];
+  priorityList: IPriority[];
+}) => {
   const {
     control,
     register,
@@ -140,7 +134,7 @@ const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
                 label="Estado"
               >
                 {statusList.map((item) => (
-                  <Option key={item.id} value={item.id.toString()}>
+                  <Option key={item.id} value={item?.id?.toString()}>
                     {item.status}
                   </Option>
                 ))}
@@ -159,7 +153,7 @@ const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
                 placeholder={undefined}
               >
                 {priorityList.map((item) => (
-                  <Option key={item.id} value={item.id.toString()}>
+                  <Option key={item.id} value={item?.id?.toString()}>
                     {item.priority}
                   </Option>
                 ))}
@@ -174,12 +168,9 @@ const EditTaskComponent = ({ taskToEdit }: { taskToEdit: ITask }) => {
           color="green"
           size="md"
           placeholder={undefined}
+          loading={mutation.isLoading}
         >
-          {mutation.isLoading ? (
-            <Spinner className="h-4 w-4 text-gray-900/10" />
-          ) : (
-            "Guardar Cambios"
-          )}
+          Guardar Cambios
         </Button>
       </form>
     </div>
