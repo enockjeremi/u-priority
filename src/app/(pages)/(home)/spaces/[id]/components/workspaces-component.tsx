@@ -1,7 +1,7 @@
 "use client";
-import React, { useRef, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
+import { ToastContainer } from "react-toastify";
 
 import {
   Button,
@@ -15,23 +15,15 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-import {
-  notifyTaskDeletedError,
-  notifyTaskDeletedSuccessfully,
-  notifyToConfirmToDeleteTask,
-} from "@/app/libs/react-toastify";
 
-import TasksComponent from "./task-component";
+import TaskComponent from "./task-component";
 import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 
 import instance from "@/app/server/utils/axios-instance";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
-import { tasks } from "@/app/libs/endpoints/tasks";
 
-import { BackArrowIcon } from "@/app/client/components/icons/back-arrow-icon";
-import PencilPlusIcon from "@/app/client/components/icons/pencil-plus-icon";
-import TrashIcon from "@/app/client/components/icons/trash-icon";
 import CreateTaskForm from "./create-task-form";
+import EditTaskComponent from "./edit-task-form";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
 
@@ -45,21 +37,12 @@ const SpacesComponent = ({
   priorityList: IPriority[];
 }) => {
   const queryClient = useQueryClient();
-  const toastId = useRef<any>(null);
 
-  const mutation = useMutation(
-    async (id: number | undefined) => {
-      return await instance
-        .delete(tasks.deleteTasks(id))
-        .then((res) => res.data);
-    },
-    { retry: 0 }
-  );
 
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
-  const [toggleTasksInfo, setToggleTasksInfo] = useState(false);
-  const [toggleEditTasks, setToggleEditTasks] = useState(false);
+  const [dialogToEditTasks, setDialogToEditTasks] = useState(false);
   const [dialogAddTask, setDialogAddTask] = useState(false);
+  const [dialogDetailTask, setDialogDetailTask] = useState(false);
 
   const [tasksInfo, setTasksInfo] = useState<ITask | null>();
 
@@ -93,91 +76,34 @@ const SpacesComponent = ({
     return strg;
   };
 
-  const handleClickDeleteTask = (tasksId: number | undefined) => {
-    mutation.mutate(tasksId, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["tasksByStatusInWorkspaces"]);
-        setTasksInfo(null);
-        setToggleTasksInfo(false);
-        notifyTaskDeletedSuccessfully();
-      },
-      onError: () => {
-        notifyTaskDeletedError();
-      },
-    });
-  };
-
-  const NotifyToConfirmTaskDeletion = ({ closeToast }: any) => {
-    return (
-      <div className="flex justify-center items-center gap-4">
-        <Button
-          placeholder={undefined}
-          onClick={() => closeToast()}
-          size="sm"
-          color="red"
-        >
-          Cancelar
-        </Button>
-        <Button
-          placeholder={undefined}
-          onClick={() => {
-            handleClickDeleteTask(tasksInfo?.id);
-            closeToast();
-          }}
-          size="sm"
-          color="green"
-        >
-          Confirmar
-        </Button>
-      </div>
-    );
-  };
 
   const handleClickAddTask = () => setDialogAddTask(!dialogAddTask);
+  const handleClickDetailTask = () => setDialogDetailTask(!dialogDetailTask);
+  const handleClicEditTask = () => setDialogToEditTasks(!dialogToEditTasks);
 
   return (
     <>
-      <ToastContainer containerId="NotifyOnCreateTaskSuccess" />
-      <div
-        className={`${
-          toggleTasksInfo ? "translate-x-0" : "-translate-x-full"
-        } duration-300 transition-all w-full h-full overflow-hidden bg-white fixed z-20 top-0 right-0`}
+      <Dialog
+        placeholder={undefined}
+        open={dialogDetailTask}
+        handler={handleClickDetailTask}
       >
-        {/* Button Back */}
-        <button
-          onClick={() => {
-            setToggleTasksInfo(!toggleTasksInfo);
-            setToggleEditTasks(false);
-            setTasksInfo(undefined);
-          }}
-          className={`text-black duration-200 hover:scale-125 absolute z-20 right-3 top-3 p-1`}
-        >
-          <BackArrowIcon className="w-6" />
-        </button>
-
-        {/* Button Edit */}
-        <button
-          onClick={() => setToggleEditTasks(!toggleEditTasks)}
-          className="absolute z-20 right-14 duration-200 hover:scale-125  text-black top-3 p-1"
-        >
-          <PencilPlusIcon className="w-6" />
-        </button>
-
-        {/* Button Delete */}
-        <button
-          onClick={() => {
-            if (!toast.isActive(toastId.current)) {
-              notifyToConfirmToDeleteTask(<NotifyToConfirmTaskDeletion />);
-            }
-          }}
-          className="absolute z-20 left-3 duration-200 hover:scale-110  text-black top-3 p-1"
-        >
-          <TrashIcon className="w-6" />
-        </button>
         {tasksInfo ? (
-          <TasksComponent tasksId={tasksInfo?.id} isEdit={toggleEditTasks} statusList={statusList} priorityList={priorityList} />
+          dialogToEditTasks ? (
+            <EditTaskComponent
+              statusList={statusList}
+              priorityList={priorityList}
+              taskToEdit={tasksInfo}
+            />
+          ) : (
+            <TaskComponent
+              clickToCancel={handleClickDetailTask}
+              handleClicEditTask={handleClicEditTask}
+              tasksId={tasksInfo?.id}
+            />
+          )
         ) : null}
-      </div>
+      </Dialog>
 
       <div className="w-full pt-6 px-2">
         <ToastContainer containerId={"NotifyOnConfimTasks"} />
@@ -258,7 +184,7 @@ const SpacesComponent = ({
                             <button
                               onClick={() => {
                                 setTasksInfo(item);
-                                setToggleTasksInfo(!toggleTasksInfo);
+                                setDialogDetailTask(!dialogDetailTask);
                               }}
                             >
                               <Typography

@@ -6,12 +6,12 @@ import { IPriority, IStatus, ITask } from "@/types/workspaces";
 import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
+  DialogBody,
+  DialogHeader,
   Input,
   Option,
   Select,
-  Spinner,
   Textarea,
-  Typography,
 } from "@material-tailwind/react";
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -30,7 +30,7 @@ const putTask = (id: number | undefined, body: FormValues) => {
   return res;
 };
 
-const EditTaskComponent = ({
+const EditTaskForm = ({
   taskToEdit,
   statusList,
   priorityList,
@@ -53,6 +53,7 @@ const EditTaskComponent = ({
     },
     resolver: joiResolver(schemaEditTask),
   });
+
   const queryClient = useQueryClient();
   const mutation = useMutation((data: any) => {
     return putTask(taskToEdit?.id, data);
@@ -76,19 +77,15 @@ const EditTaskComponent = ({
   };
 
   return (
-    <div className="w-full p-6 mt-4 flex flex-col gap-4">
+    <>
       <ToastContainer containerId={"NotifyUpdateTasks"} />
-      <Typography
-        placeholder={undefined}
-        variant="h3"
-        color="black"
-        className="font-normal leading-none"
-      >
-        Actualizando tarea
-      </Typography>
+      <DialogHeader placeholder={undefined} className="pb-0">
+        Actualizar tarea
+      </DialogHeader>
+      <DialogBody placeholder={undefined}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col w-full gap-8 mt-4"
+        className="flex flex-col w-full gap-8"
       >
         <div className="w-full">
           <Input
@@ -173,8 +170,10 @@ const EditTaskComponent = ({
           Guardar Cambios
         </Button>
       </form>
-    </div>
+      </DialogBody>
+    </>
+
   );
 };
 
-export default EditTaskComponent;
+export default EditTaskForm;
