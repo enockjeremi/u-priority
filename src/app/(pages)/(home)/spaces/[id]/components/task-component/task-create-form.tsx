@@ -6,6 +6,7 @@ import {
   Textarea,
   Select,
   Option,
+  IconButton,
 } from "@material-tailwind/react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
@@ -23,13 +24,14 @@ import {
   notifyCreateTaskSuccessfully,
 } from "@/app/libs/react-toastify";
 import { ToastContainer } from "react-toastify";
+import { CloseIcon } from "@/app/client/components/icons/close-icon";
 
 const postTask = (body: FormTaskValues) => {
   const res = instance.post(tasks.createTask, body).then((res) => res.data);
   return res;
 };
 
-export default function CreateTaskForm({
+export default function TaskCreateForm({
   handleClickCancel,
   statusList,
   priorityList,
@@ -68,24 +70,31 @@ export default function CreateTaskForm({
 
   return (
     <>
-    <ToastContainer containerId='NotifyOnCreateTaskError' />
+      <ToastContainer containerId="NotifyOnCreateTaskError" />
       <Card
         placeholder={undefined}
         className="p-4"
         color="transparent"
         shadow={false}
       >
-        <Typography
-          className="text-center"
-          placeholder={undefined}
-          variant="h4"
-          color="blue-gray"
-        >
-          Agrega una nueva tarea
-        </Typography>
+        <div className="flex justify-between items-center">
+          <Typography placeholder={undefined} variant="h5" color="blue-gray">
+            Agrega una nueva tarea
+          </Typography>
+
+          <IconButton
+            placeholder={undefined}
+            color="blue-gray"
+            size="sm"
+            variant="text"
+            onClick={handleClickCancel}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mt-8 mb-2 max-w-screen-lg sm:w-96"
+          className="pt-4 mb-2 max-w-screen-lg sm:w-96"
         >
           <div className="mb-1 flex flex-col gap-3">
             <Typography
@@ -124,6 +133,7 @@ export default function CreateTaskForm({
             <Textarea
               size="md"
               {...register("description")}
+              maxLength={150}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -190,26 +200,16 @@ export default function CreateTaskForm({
             )}
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={handleClickCancel}
-              placeholder={undefined}
-              className="mt-6"
-              fullWidth
-            >
-              cancelar
-            </Button>
-            <Button
-              placeholder={undefined}
-              type="submit"
-              color="green"
-              className="mt-6"
-              fullWidth
-              loading={mutation.isLoading}
-            >
-              Agregar
-            </Button>
-          </div>
+          <Button
+            placeholder={undefined}
+            type="submit"
+            color="green"
+            className="mt-6"
+            fullWidth
+            loading={mutation.isLoading}
+          >
+            Agregar
+          </Button>
         </form>
       </Card>
     </>

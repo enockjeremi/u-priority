@@ -5,7 +5,9 @@ import {
   DialogBody,
   DialogFooter,
   DialogHeader,
+  IconButton,
   Spinner,
+  Typography,
 } from "@material-tailwind/react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { tasks } from "@/app/libs/endpoints/tasks";
@@ -16,6 +18,8 @@ import {
   notifyTaskDeletedError,
   notifyTaskDeletedSuccessfully,
 } from "@/app/libs/react-toastify";
+import { ToastContainer } from "react-toastify";
+import { CloseIcon } from "@/app/client/components/icons/close-icon";
 
 const getTasksById = (id: number | undefined) => {
   if (!id) return null;
@@ -23,12 +27,12 @@ const getTasksById = (id: number | undefined) => {
   return res;
 };
 
-const TaskComponent = ({
+const TaskDetailComponent = ({
   tasksId,
   clickToCancel,
-  handleClicEditTask
+  handleClickEditTask,
 }: {
-  handleClicEditTask: () => void;
+  handleClickEditTask: () => void;
   clickToCancel: () => void;
   tasksId: number | undefined;
 }) => {
@@ -57,7 +61,7 @@ const TaskComponent = ({
     mutation.mutate(tasksId, {
       onSuccess: () => {
         queryClient.invalidateQueries(["tasksByStatusInWorkspaces"]);
-        clickToCancel()
+        clickToCancel();
         notifyTaskDeletedSuccessfully();
       },
       onError: () => {
@@ -74,12 +78,38 @@ const TaskComponent = ({
         </div>
       ) : (
         <>
-          <DialogHeader placeholder={undefined} className="pb-2">
-            {task?.name}
+          <DialogHeader
+            placeholder={undefined}
+            className="flex justify-between items-center"
+          >
+            <Typography
+              placeholder={undefined}
+              className="w-full"
+              variant="h5"
+              color="blue-gray"
+            >
+              {task.name}
+            </Typography>
+            <IconButton
+              placeholder={undefined}
+              color="blue-gray"
+              size="sm"
+              variant="text"
+              className="w-[20%]"
+              onClick={clickToCancel}
+            >
+              <CloseIcon />
+            </IconButton>
           </DialogHeader>
           <DialogBody placeholder={undefined}>
             <div className="flex flex-col gap-8 justify-between">
-              <div>{task?.description}</div>
+              <Typography
+                placeholder={undefined}
+                color="gray"
+                variant="paragraph"
+              >
+                {task.description}
+              </Typography>
               <div>
                 <div className="flex justify-between items-center">
                   <Chip size="md" value={task?.status.status || ""} />
@@ -118,7 +148,7 @@ const TaskComponent = ({
               <Button
                 variant="gradient"
                 color="green"
-                onClick={() => handleClicEditTask()}
+                onClick={() => handleClickEditTask()}
                 disabled={toggleComfirm}
                 placeholder={undefined}
               >
@@ -156,4 +186,4 @@ const TaskComponent = ({
   );
 };
 
-export default TaskComponent;
+export default TaskDetailComponent;

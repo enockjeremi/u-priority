@@ -9,21 +9,22 @@ import {
   CardBody,
   Chip,
   Dialog,
+  IconButton,
   Option,
   Select,
   Spinner,
   Typography,
 } from "@material-tailwind/react";
 
-
-import TaskComponent from "./task-component";
+import TaskDetailComponent from "./task-component/task-detail-component";
 import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 
 import instance from "@/app/server/utils/axios-instance";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
 
-import CreateTaskForm from "./create-task-form";
-import EditTaskComponent from "./edit-task-form";
+import TaskCreateForm from "./task-component/task-create-form";
+import TaskEditComponent from "./task-component/task-edit-form";
+import { useRouter } from "next/navigation";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
 
@@ -37,12 +38,12 @@ const SpacesComponent = ({
   priorityList: IPriority[];
 }) => {
   const queryClient = useQueryClient();
-
+  const router = useRouter();
 
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
   const [dialogToEditTasks, setDialogToEditTasks] = useState(false);
   const [dialogAddTask, setDialogAddTask] = useState(false);
-  const [dialogDetailTask, setDialogDetailTask] = useState(false);
+  const [dialogTaskDetail, setDialogTaskDetail] = useState(false);
 
   const [tasksInfo, setTasksInfo] = useState<ITask | null>();
 
@@ -76,47 +77,80 @@ const SpacesComponent = ({
     return strg;
   };
 
-
   const handleClickAddTask = () => setDialogAddTask(!dialogAddTask);
-  const handleClickDetailTask = () => setDialogDetailTask(!dialogDetailTask);
-  const handleClicEditTask = () => setDialogToEditTasks(!dialogToEditTasks);
+  const handleClickTaskDetail = () => {
+    setDialogToEditTasks(false);
+    setDialogTaskDetail(!dialogTaskDetail);
+  };
+  const handleClickEditTask = () => setDialogToEditTasks(!dialogToEditTasks);
 
+  const handleClickSettings = () => {
+    router.push(`/spaces/${workspaces.id}/settings`);
+  };
   return (
     <>
       <Dialog
         placeholder={undefined}
-        open={dialogDetailTask}
-        handler={handleClickDetailTask}
+        open={dialogTaskDetail}
+        handler={handleClickTaskDetail}
       >
         {tasksInfo ? (
           dialogToEditTasks ? (
-            <EditTaskComponent
+            <TaskEditComponent
               statusList={statusList}
               priorityList={priorityList}
               taskToEdit={tasksInfo}
+              handleClickEditTask={handleClickEditTask}
             />
           ) : (
-            <TaskComponent
-              clickToCancel={handleClickDetailTask}
-              handleClicEditTask={handleClicEditTask}
+            <TaskDetailComponent
+              clickToCancel={handleClickTaskDetail}
+              handleClickEditTask={handleClickEditTask}
               tasksId={tasksInfo?.id}
             />
           )
-        ) : null}
+        ) : (
+          ""
+        )}
       </Dialog>
 
       <div className="w-full pt-6 px-2">
-        <ToastContainer containerId={"NotifyOnConfimTasks"} />
+        <ToastContainer containerId={"NotifyOnCreateTaskSuccess"} />
         <ToastContainer containerId={"NotifyDeleteSuccessTasks"} />
         <div className="w-full flex flex-col gap-4">
-          <Typography
-            className="ml-2"
-            placeholder={undefined}
-            variant="h5"
-            color="blue-gray"
-          >
-            {workspaces.name}
-          </Typography>
+          <div className="flex justify-between items-center">
+            <Typography
+              // className="ml-2"
+              placeholder={undefined}
+              variant="h6"
+              color="blue-gray"
+            >
+              {workspaces.name}
+            </Typography>
+            <IconButton
+              placeholder={undefined}
+              color="blue-gray"
+              size="sm"
+              variant="text"
+              className="w-[20%]"
+              onClick={handleClickSettings}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" />
+                <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+              </svg>
+            </IconButton>
+          </div>
           <div className="pt-2">
             <Select
               onChange={handleSelectStatusChange}
@@ -184,7 +218,7 @@ const SpacesComponent = ({
                             <button
                               onClick={() => {
                                 setTasksInfo(item);
-                                setDialogDetailTask(!dialogDetailTask);
+                                setDialogTaskDetail(!dialogTaskDetail);
                               }}
                             >
                               <Typography
@@ -247,7 +281,7 @@ const SpacesComponent = ({
         open={dialogAddTask}
         handler={handleClickAddTask}
       >
-        <CreateTaskForm
+        <TaskCreateForm
           statusList={statusList}
           priorityList={priorityList}
           workspacesid={workspaces.id}
