@@ -1,6 +1,6 @@
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
 import { tasks } from "@/app/libs/endpoints/tasks";
-import { schemaEditTask } from "@/app/libs/joi/schemas";
+import { schemaTask } from "@/app/libs/joi/schemas";
 import { notifyUpdateTasks } from "@/app/libs/react-toastify";
 import instance from "@/app/server/utils/axios-instance";
 import { IPriority, IStatus, ITask } from "@/types/workspaces";
@@ -56,7 +56,7 @@ const TaskEditForm = ({
       statusid: taskToEdit.status.id?.toString(),
       priorityid: taskToEdit.priority.id?.toString(),
     },
-    resolver: joiResolver(schemaEditTask),
+    resolver: joiResolver(schemaTask),
   });
 
   const queryClient = useQueryClient();

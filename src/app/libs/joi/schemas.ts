@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { esErrors } from "@/utils/joi-es-errors";
 
-export const schemaCreateTask = Joi.object({
+export const schemaTask = Joi.object({
   name: Joi.string().required().messages(esErrors),
   description: Joi.string().required().messages(esErrors),
   statusid: Joi.string().required().messages(esErrors),
@@ -26,9 +26,7 @@ export const schemaSignUp = Joi.object({
   cpassword: Joi.any().valid(Joi.ref("password")).required().messages(esErrors),
 });
 
-export const schemaEditTask = Joi.object({
-  name: Joi.string().required().messages(esErrors),
-  description: Joi.string().required().messages(esErrors),
-  statusid: Joi.number().required(),
-  priorityid: Joi.number().required(),
+
+export const schemaWorkspaces = Joi.object({
+  name: Joi.string().min(4).required().messages(esErrors),
 });

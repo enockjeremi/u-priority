@@ -4,3 +4,7 @@ export type FormTaskValues = {
   statusid: string | undefined;
   priorityid: string | undefined;
 };
+
+export interface FormWorkspacesValues {
+  name: string;
+}

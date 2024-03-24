@@ -8,6 +8,8 @@ export const workspaces = {
 
   getBy: (id: number) => `${API_URL}/workspaces/${id}`,
   create: `${API_URL}/workspaces/`,
+  update:(id: number) => `${API_URL}/workspaces/${id}`,
+  delete:(id: number) => `${API_URL}/workspaces/${id}`,
 
   filterByStatus: (workspacesId: number, statusId: number) =>
     `${API_URL}/workspaces/${workspacesId}/status/${statusId}`,

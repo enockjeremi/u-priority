@@ -11,10 +11,10 @@ import {
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
 import { joiResolver } from "@hookform/resolvers/joi";
-import { schemaCreateTask } from "@/app/libs/joi/schemas";
+import { schemaTask } from "@/app/libs/joi/schemas";
 
 import { IPriority, IStatus } from "@/types/workspaces";
-import { FormTaskValues } from "@/types/task";
+import { FormTaskValues } from "@/types/form-values";
 import { useMutation, useQueryClient } from "react-query";
 import instance from "@/app/server/utils/axios-instance";
 import { tasks } from "@/app/libs/endpoints/tasks";
@@ -47,7 +47,7 @@ export default function TaskCreateForm({
     register,
     control,
     formState: { errors },
-  } = useForm<FormTaskValues>({ resolver: joiResolver(schemaCreateTask) });
+  } = useForm<FormTaskValues>({ resolver: joiResolver(schemaTask) });
   const queryClient = useQueryClient();
   const mutation = useMutation((data: TODO) => {
     return postTask(data);

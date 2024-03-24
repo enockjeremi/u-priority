@@ -21,15 +21,9 @@ import {
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import instance from "@/app/server/utils/axios-instance";
 import BasicLogo from "@/app/client/components/basic-logo";
-
-interface IWorkspaces {
-  id?: string;
-  name: string;
-}
-
-const schema = Joi.object({
-  name: Joi.string().min(4).required(),
-});
+import { FormWorkspacesValues } from "@/types/form-values";
+import { IWorkspaces } from "@/types/workspaces";
+import { schemaWorkspaces } from "@/app/libs/joi/schemas";
 
 const SidebarComponent = () => {
   const {
@@ -37,7 +31,7 @@ const SidebarComponent = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<IWorkspaces>({ resolver: joiResolver(schema) });
+  } = useForm<FormWorkspacesValues>({ resolver: joiResolver(schemaWorkspaces) });
 
   const [openNav, setOpenNav] = React.useState(false);
   const handleWindowResize = () =>
@@ -66,7 +60,7 @@ const SidebarComponent = () => {
       await instance.get(workspaces_endpoints.getAll).then((res) => res.data),
   });
 
-  const onSubmit: SubmitHandler<IWorkspaces> = (data) => {
+  const onSubmit: SubmitHandler<FormWorkspacesValues> = (data) => {
     mutation.mutate(
       { name: data.name },
       {
@@ -110,7 +104,7 @@ const SidebarComponent = () => {
       containerId: "NotifyAddWorkspacesError",
     });
 
-    const clickToOenNav = () => setOpenNav(!openNav)
+  const clickToOenNav = () => setOpenNav(!openNav);
 
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
@@ -121,7 +115,9 @@ const SidebarComponent = () => {
         className="flex items-center gap-x-2 p-1 font-medium"
         placeholder={undefined}
       >
-        <Link onClick={clickToOenNav} href={"/"}>Inicio</Link>
+        <Link onClick={clickToOenNav} href={"/"}>
+          Inicio
+        </Link>
       </Typography>
       <Typography
         placeholder={undefined}
@@ -174,7 +170,9 @@ const SidebarComponent = () => {
           placeholder={undefined}
         >
           <StackIcon className="w-5" />
-          <Link onClick={clickToOenNav} href={`/spaces/${item.id}`}>{item.name}</Link>
+          <Link onClick={clickToOenNav} href={`/spaces/${item.id}`}>
+            {item.name}
+          </Link>
         </Typography>
       ))}
     </ul>
