@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 
 import { navigate } from "@/app/server/actions/navigate";
-import { QUERY_KEY } from "@/app/server/constants/query-keys";
+import { QUERY_KEY_USERS } from "@/app/server/constants/query-keys";
 
 import { ResponseError } from "@/utils/Error/response-error";
 
 import { auth } from "@/app/libs/endpoints/auth";
-import { CredentialsToSignUp, User } from "@/types/auth.types";
+import { ICredentialsToSignUp, IUser } from "@/types/auth.types";
 
-async function signUp(body: CredentialsToSignUp): Promise<User> {
+async function signUp(body: ICredentialsToSignUp): Promise<IUser> {
   const response = await fetch(auth.signup, {
     method: "POST",
     body: JSON.stringify(body),
@@ -33,13 +33,13 @@ const useSignUp = () => {
   const errosMessage = (message = "") => setErrors(message);
 
   const { mutate: signUpMutation, isLoading } = useMutation<
-    User,
+    IUser,
     unknown,
-    CredentialsToSignUp,
+    ICredentialsToSignUp,
     unknown
   >((body) => signUp(body), {
     onSuccess: async (data) => {
-      queryClient.setQueryData([QUERY_KEY.user], data);
+      queryClient.setQueryData([QUERY_KEY_USERS.user], data);
       successMessage("Te has registrado correctamente.");
       navigate("/auth/sign-in");
     },

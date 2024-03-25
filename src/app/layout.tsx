@@ -1,4 +1,4 @@
-import QueryClientServerProvider from "../client/context/query-client-provider";
+import QueryClientServerProvider from "./client/context/query-client-provider";
 import type { Metadata } from "next";
 
 // import { Poppins } from "next/font/google";

@@ -19,12 +19,9 @@ import { useMutation, useQueryClient } from "react-query";
 import instance from "@/app/server/utils/axios-instance";
 import { tasks } from "@/app/libs/endpoints/tasks";
 import { TODO } from "@/types/todo.types";
-import {
-  notifyCreateTaskError,
-  notifyCreateTaskSuccessfully,
-} from "@/app/libs/react-toastify";
-import { ToastContainer } from "react-toastify";
+import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 
 const postTask = (body: FormTaskValues) => {
   const res = instance.post(tasks.createTask, body).then((res) => res.data);
@@ -47,7 +44,16 @@ export default function TaskCreateForm({
     register,
     control,
     formState: { errors },
-  } = useForm<FormTaskValues>({ resolver: joiResolver(schemaTask) });
+  } = useForm<FormTaskValues>({
+    defaultValues: {
+      name: "Tarea de prueba",
+      description:
+        "Support this project with your organization. Your logo will show up here with a link to your website.",
+      statusid: "3",
+      priorityid: "1",
+    },
+    resolver: joiResolver(schemaTask),
+  });
   const queryClient = useQueryClient();
   const mutation = useMutation((data: TODO) => {
     return postTask(data);
@@ -57,20 +63,19 @@ export default function TaskCreateForm({
     const body = { ...data, workspacesid };
     mutation.mutate(body, {
       onSuccess: () => {
-        queryClient.invalidateQueries("tasksByStatusInWorkspaces");
-        queryClient.invalidateQueries("tasks");
-        notifyCreateTaskSuccessfully();
+        queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
+        queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks);
+        notifySuccess("Tarea creada.");
         handleClickCancel();
       },
       onError: () => {
-        notifyCreateTaskError();
+        notifyError("No se a podido crear la tarea.");
       },
     });
   };
 
   return (
     <>
-      <ToastContainer containerId="NotifyOnCreateTaskError" />
       <Card
         placeholder={undefined}
         className="p-4"
@@ -204,7 +209,7 @@ export default function TaskCreateForm({
             placeholder={undefined}
             type="submit"
             color="green"
-            className="mt-6"
+            className="flex items-center justify-center mt-6"
             fullWidth
             loading={mutation.isLoading}
           >

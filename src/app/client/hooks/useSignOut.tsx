@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useQueryClient } from "react-query";
 
-import { QUERY_KEY } from "@/app/server/constants/query-keys";
+import { QUERY_KEY_USERS } from "@/app/server/constants/query-keys";
 import { navigate } from "@/app/server/actions/navigate";
 import { removeUserToken } from "@/app/server/token/user-token";
 
@@ -10,7 +10,7 @@ export function useSignOut() {
 
   const onSignOut = useCallback(() => {
     removeUserToken()
-    queryClient.setQueryData([QUERY_KEY.user], null);
+    queryClient.setQueryData([QUERY_KEY_USERS.user], null);
     navigate("/auth/sign-in");
   }, [queryClient]);
 

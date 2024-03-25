@@ -5,6 +5,8 @@ import { getSession } from "@/app/server/actions/get-session";
 import SidebarComponent from "./components/sidebar-component";
 import "react-toastify/dist/ReactToastify.css";
 
+import { ToastContainer } from "react-toastify";
+
 const HomeLayout = async ({ children }: { children: ReactNode }) => {
   const session = await getSession();
   if (!session) redirect("/auth/sign-in");
@@ -12,7 +14,11 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="h-screen w-full flex flex-col">
       <SidebarComponent />
-      <div className="w-full">{children}</div>
+      <div className="w-full">
+        <ToastContainer className={''} containerId="NotifySuccess" />
+        <ToastContainer containerId="NotifyError" />
+        {children}
+      </div>
     </div>
   );
 };

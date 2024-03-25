@@ -4,11 +4,10 @@ import { CloseIcon } from "@/app/client/components/icons/close-icon";
 import SettingsIcon from "@/app/client/components/icons/settings-icon";
 import { workspaces } from "@/app/libs/endpoints/workspaces";
 import { schemaWorkspaces } from "@/app/libs/joi/schemas";
-import {
-  notifyUpdateWorkspacesSuccessfully,
-  notifyWorkspacesDeleteSuccessfully,
-  notifyWorkspacesUpdateError,
-} from "@/app/libs/react-toastify";
+
+import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
+
 import instance from "@/app/server/utils/axios-instance";
 import { FormWorkspacesValues } from "@/types/form-values";
 import { IWorkspaces } from "@/types/workspaces";
@@ -24,9 +23,9 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { ToastContainer } from "react-toastify";
 
 const putWorkspaces = (id: number, body: FormWorkspacesValues) => {
@@ -44,9 +43,11 @@ const SettingsWorkspacesComponent = ({
 }: {
   workspaces: IWorkspaces;
 }) => {
-  const router = useRouter()
+  const router = useRouter();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [confirmName, setConfirmName] = useState("");
+  const [isMatch, setIsMatch] = useState(false);
+
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -74,35 +75,41 @@ const SettingsWorkspacesComponent = ({
     const body = { name: data.name.trim() };
     mutationUpdate.mutate(body, {
       onSuccess: () => {
-        notifyUpdateWorkspacesSuccessfully();
+        notifySuccess("Proyecto modificado.");
       },
       onError: () => {
-        notifyWorkspacesUpdateError();
+        notifyError("No se a podido modificar.");
       },
     });
   };
 
-  const handleClickDelete = () => setDialogOpen(!dialogOpen);
-  const handleChange = (e: any) => setConfirmName(e.target.value);
+  const handleClickDelete = () => {
+    setDialogOpen(!dialogOpen);
+    setIsMatch(false);
+  };
+
+  const handleChange = (e: any) => {
+    const value = e.target.value;
+    const match = value === workspaces.name;
+    if (match) setIsMatch(true);
+    else if (!match) setIsMatch(false);
+  };
+
   const handleClickConfirmDelete = () => {
-    const match = confirmName === workspaces.name;
-    if (match) {
-      mutationDelete.mutate(workspaces.id, {
-        onSuccess: () => {
-          router.push('/')
-          notifyWorkspacesDeleteSuccessfully()
-        },
-        onError: (error) => {
-          console.log(error)
-        },
-      });
-    }
+    mutationDelete.mutate(workspaces.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(QUERY_KEY_TASKS.workspaces);
+        notifySuccess("Proyecto eliminado.");
+        router.replace("/");
+      },
+      onError: () => {
+        notifyError("No se a podido eliminar.");
+      },
+    });
   };
 
   return (
     <>
-      <ToastContainer containerId="NotifyUpdateWorkspaces" />
-      <ToastContainer containerId="NotifyWorkspacesUpdateError" />
       <div className="w-full px-2 py-6 flex flex-col gap-6">
         <div className="flex items-center">
           <IconButton
@@ -162,6 +169,7 @@ const SettingsWorkspacesComponent = ({
             type="submit"
             color="green"
             size="sm"
+            className="w-full flex items-center justify-center"
             placeholder={undefined}
           >
             Guardar cambios
@@ -204,6 +212,8 @@ const SettingsWorkspacesComponent = ({
         open={dialogOpen}
         handler={handleClickDelete}
       >
+        <ToastContainer containerId="NotifyWorkspacesDeleteError" />
+
         <DialogHeader
           placeholder={undefined}
           className="pb-0 flex items-center justify-between w-full"
@@ -242,7 +252,7 @@ const SettingsWorkspacesComponent = ({
           <Button
             type="submit"
             className="w-full flex items-center justify-center"
-            disabled={mutationDelete.isLoading && true}
+            disabled={!isMatch}
             color="red"
             size="sm"
             placeholder={undefined}

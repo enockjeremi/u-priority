@@ -14,12 +14,9 @@ import { tasks } from "@/app/libs/endpoints/tasks";
 import instance from "@/app/server/utils/axios-instance";
 import TrashIcon from "@/app/client/components/icons/trash-icon";
 import { useState } from "react";
-import {
-  notifyTaskDeletedError,
-  notifyTaskDeletedSuccessfully,
-} from "@/app/libs/react-toastify";
-import { ToastContainer } from "react-toastify";
+import { notifySuccess, notifyError } from "@/app/libs/react-toastify";
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 
 const getTasksById = (id: number | undefined) => {
   if (!id) return null;
@@ -60,12 +57,12 @@ const TaskDetailComponent = ({
   const handleClickDeleteTask = (tasksId: number | undefined) => {
     mutation.mutate(tasksId, {
       onSuccess: () => {
-        queryClient.invalidateQueries(["tasksByStatusInWorkspaces"]);
+        queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
         clickToCancel();
-        notifyTaskDeletedSuccessfully();
+        notifySuccess("Tarea eliminada.");
       },
       onError: () => {
-        notifyTaskDeletedError();
+        notifyError("No se a podido eliminar.");
       },
     });
   };

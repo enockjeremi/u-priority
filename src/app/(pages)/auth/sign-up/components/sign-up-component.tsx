@@ -6,7 +6,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 
 import useSignUp from "@/app/client/hooks/useSignUp";
 import { ICredentialsToSignUp } from "@/types/auth.types";
-import { Input } from "@material-tailwind/react";
+import { Button, Input } from "@material-tailwind/react";
 import { schemaSignUp } from "@/app/libs/joi/schemas";
 
 const SignUpComponent = () => {
@@ -105,15 +105,17 @@ const SignUpComponent = () => {
           </div>
         )}
         <div className="flex flex-col items-center justify-center space-y-1 pt-4">
-          <button
+          <Button
+            type="submit"
             disabled={isLoading && true}
-            className={`${
-              isLoading && "cursor-not-allow hover:bg-black/30"
-            } w-full rounded-md bg-primary px-2 py-2 uppercase text-white duration-150 hover:bg-black/90`}
+            loading={isLoading}
+            placeholder={undefined}
+            color="blue-gray"
+            className="flex items-center justify-center mt-6"
+            fullWidth
           >
-            {isLoading ? "cargando.. " : "Registrar"}
-          </button>
-
+            Registrar
+          </Button>
           <p className="py-2 text-[12px] text-slate-500">
             <span>¿Ya tienes una cuenta? </span>
             <Link

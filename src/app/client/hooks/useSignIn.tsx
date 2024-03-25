@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 
 import { navigate } from "@/app/server/actions/navigate";
-import { QUERY_KEY } from "@/app/server/constants/query-keys";
+import { QUERY_KEY_USERS } from "@/app/server/constants/query-keys";
 import { saveUserToken } from "@/app/server/token/user-token";
 
 import { ResponseError } from "@/utils/Error/response-error";
@@ -45,7 +45,7 @@ const useSignIn = () => {
   >(({ email, password }) => signIn(email, password, setIsLoading), {
     onSuccess: async (data) => {
       saveUserToken(data.access_token);
-      queryClient.setQueryData([QUERY_KEY.user], data.user);
+      queryClient.setQueryData([QUERY_KEY_USERS.user], data.user);
       navigate("/");
     },
     onError: (error) => {

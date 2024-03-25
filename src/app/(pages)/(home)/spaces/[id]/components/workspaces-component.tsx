@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { ToastContainer } from "react-toastify";
 
 import {
   Button,
@@ -26,6 +25,7 @@ import TaskCreateForm from "./task-component/task-create-form";
 import TaskEditComponent from "./task-component/task-edit-form";
 import { useRouter } from "next/navigation";
 import SettingsIcon from "@/app/client/components/icons/settings-icon";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
 
@@ -52,7 +52,7 @@ const SpacesComponent = ({
   const { id: spacesID } = workspaces;
 
   const { data, isLoading } = useQuery<IWorkspaces>({
-    queryKey: ["tasksByStatusInWorkspaces", { spacesID, selectTasksByStatus }],
+    queryKey: [QUERY_KEY_TASKS.tasks_list, { spacesID, selectTasksByStatus }],
     queryFn: async () => {
       return await instance
         .get(workSpacesEndpoint.filterByStatus(spacesID, selectTasksByStatus))
@@ -66,7 +66,7 @@ const SpacesComponent = ({
 
   const handleSelectStatusChange = (value: any) => {
     setSelectTasksByStatus(Number(value));
-    queryClient.invalidateQueries("tasksByStatusInWorkspaces");
+    queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
   };
 
   //Remover o mejorar
@@ -94,13 +94,16 @@ const SpacesComponent = ({
         placeholder={undefined}
         open={dialogTaskDetail}
         handler={handleClickTaskDetail}
+        className="z-10"
       >
+
         {tasksInfo ? (
           dialogToEditTasks ? (
             <TaskEditComponent
               statusList={statusList}
               priorityList={priorityList}
               taskToEdit={tasksInfo}
+              handleClickTaskDetail={handleClickTaskDetail}
               handleClickEditTask={handleClickEditTask}
             />
           ) : (
@@ -116,8 +119,6 @@ const SpacesComponent = ({
       </Dialog>
 
       <div className="w-full pt-6 px-2">
-        <ToastContainer containerId={"NotifyOnCreateTaskSuccess"} />
-        <ToastContainer containerId={"NotifyDeleteSuccessTasks"} />
         <div className="w-full flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <Typography

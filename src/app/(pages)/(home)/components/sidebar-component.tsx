@@ -24,6 +24,8 @@ import BasicLogo from "@/app/client/components/basic-logo";
 import { FormWorkspacesValues } from "@/types/form-values";
 import { IWorkspaces } from "@/types/workspaces";
 import { schemaWorkspaces } from "@/app/libs/joi/schemas";
+import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 
 const SidebarComponent = () => {
   const {
@@ -55,7 +57,7 @@ const SidebarComponent = () => {
   });
 
   const { data: workspaces_list } = useQuery<IWorkspaces[]>({
-    queryKey: ["workspaces", token],
+    queryKey: [QUERY_KEY_TASKS.workspaces, token],
     queryFn: async () =>
       await instance.get(workspaces_endpoints.getAll).then((res) => res.data),
   });
@@ -65,44 +67,16 @@ const SidebarComponent = () => {
       { name: data.name },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries("workspaces");
-          notifyAddWorkspacesSuccessfully();
+          queryClient.invalidateQueries(QUERY_KEY_TASKS.workspaces);
+          notifySuccess('Nuevo proyecto agregado.');
         },
         onError: () => {
-          notifyAddWorkspacesError();
+          notifyError('Hubo un problema al agregar el proyecto.');
         },
       }
     );
     reset();
   };
-
-  const notifyAddWorkspacesSuccessfully = () =>
-    toast.success("Nuevo proyecto agregado!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-      containerId: "NotifyAddWorkspacesSuccessfully",
-    });
-
-  const notifyAddWorkspacesError = () =>
-    toast.error("No se pudo agragar el proyecto!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-      containerId: "NotifyAddWorkspacesError",
-    });
 
   const clickToOenNav = () => setOpenNav(!openNav);
 

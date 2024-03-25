@@ -1,7 +1,8 @@
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
 import { tasks } from "@/app/libs/endpoints/tasks";
 import { schemaTask } from "@/app/libs/joi/schemas";
-import { notifyUpdateTasks } from "@/app/libs/react-toastify";
+import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import instance from "@/app/server/utils/axios-instance";
 import { IPriority, IStatus, ITask } from "@/types/workspaces";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -19,7 +20,6 @@ import {
 import React from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
-import { ToastContainer } from "react-toastify";
 
 type FormValues = {
   name: string | undefined;
@@ -37,11 +37,13 @@ const TaskEditForm = ({
   taskToEdit,
   statusList,
   priorityList,
+  handleClickTaskDetail,
   handleClickEditTask,
 }: {
   taskToEdit: ITask;
   statusList: IStatus[];
   priorityList: IPriority[];
+  handleClickTaskDetail: () => void;
   handleClickEditTask: () => void;
 }) => {
   const {
@@ -70,12 +72,13 @@ const TaskEditForm = ({
       { name, description, statusid, priorityid },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries("tasksByStatusInWorkspaces");
-          queryClient.invalidateQueries("tasks");
-          notifyUpdateTasks();
+          queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
+          queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks);
+          handleClickTaskDetail();
+          notifySuccess("Tarea modificada");
         },
-        onError: (error) => {
-          console.log("error: ", error);
+        onError: () => {
+          notifyError("No se a podido modificar.");
         },
       }
     );
@@ -83,7 +86,6 @@ const TaskEditForm = ({
 
   return (
     <>
-      <ToastContainer containerId={"NotifyUpdateTasks"} />
       <DialogHeader
         placeholder={undefined}
         className="pb-0 flex items-center justify-between w-full"
