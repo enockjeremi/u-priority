@@ -1,4 +1,7 @@
 "use client";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+
 import {
   Button,
   Chip,
@@ -9,13 +12,14 @@ import {
   Spinner,
   Typography,
 } from "@material-tailwind/react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { tasks } from "@/app/libs/endpoints/tasks";
-import instance from "@/app/server/utils/axios-instance";
-import TrashIcon from "@/app/client/components/icons/trash-icon";
-import { useState } from "react";
+
 import { notifySuccess, notifyError } from "@/app/libs/react-toastify";
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
+import TrashIcon from "@/app/client/components/icons/trash-icon";
+
+import instance from "@/app/server/utils/axios-instance";
+import { tasks } from "@/app/libs/endpoints/tasks";
+
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 
 const getTasksById = (id: number | undefined) => {

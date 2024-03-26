@@ -1,84 +1,53 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import Joi from "joi";
-import { joiResolver } from "@hookform/resolvers/joi";
+import { useQuery } from "react-query";
 
-import { workspaces as workspaces_endpoints } from "@/app/libs/endpoints/workspaces";
-
-import { CopyPlusIcon } from "@/app/client/components/icons/copy-plus-icon";
-import { StackIcon } from "@/app/client/components/icons/stack-icon";
-import { PlusIcon } from "@/app/client/components/icons/plus-icon";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getUserToken } from "@/app/server/token/user-token";
 import {
+  Button,
   Collapse,
+  Dialog,
   IconButton,
   Navbar,
   Typography,
 } from "@material-tailwind/react";
-import { Bounce, ToastContainer, toast } from "react-toastify";
-import instance from "@/app/server/utils/axios-instance";
+
+import WorkspacesCreateForm from "./workspaces-create-form";
 import BasicLogo from "@/app/client/components/basic-logo";
-import { FormWorkspacesValues } from "@/types/form-values";
+import { StackIcon } from "@/app/client/components/icons/stack-icon";
+
+import instance from "@/app/server/utils/axios-instance";
+import { workspaces } from "@/app/libs/endpoints/workspaces";
+
 import { IWorkspaces } from "@/types/workspaces";
-import { schemaWorkspaces } from "@/app/libs/joi/schemas";
-import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
+import { CloseIcon } from "@/app/client/components/icons/close-icon";
+import NavbarIcon from "@/app/client/components/icons/navbar-icon";
 
 const SidebarComponent = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormWorkspacesValues>({ resolver: joiResolver(schemaWorkspaces) });
+  const [openNav, setOpenNav] = useState<boolean>(false);
+  const [openDialogWorkspaces, setOpenDialogWorkspaces] =
+    useState<boolean>(false);
 
-  const [openNav, setOpenNav] = React.useState(false);
   const handleWindowResize = () =>
     window.innerWidth >= 960 && setOpenNav(false);
 
   React.useEffect(() => {
     window.addEventListener("resize", handleWindowResize);
-
     return () => {
       window.removeEventListener("resize", handleWindowResize);
     };
   }, []);
 
-  const [toggleInputAddWorkspaces, setToggleInputAddWorkspaces] =
-    useState<boolean>(false);
-
-  const token = getUserToken();
-  const queryClient = useQueryClient();
-  const mutation = useMutation((formData: any) => {
-    return instance.post(workspaces_endpoints.create, formData);
-  });
-
   const { data: workspaces_list } = useQuery<IWorkspaces[]>({
-    queryKey: [QUERY_KEY_TASKS.workspaces, token],
+    queryKey: [QUERY_KEY_TASKS.workspaces],
     queryFn: async () =>
-      await instance.get(workspaces_endpoints.getAll).then((res) => res.data),
+      await instance.get(workspaces.getAll).then((res) => res.data),
   });
-
-  const onSubmit: SubmitHandler<FormWorkspacesValues> = (data) => {
-    mutation.mutate(
-      { name: data.name },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(QUERY_KEY_TASKS.workspaces);
-          notifySuccess('Nuevo proyecto agregado.');
-        },
-        onError: () => {
-          notifyError('Hubo un problema al agregar el proyecto.');
-        },
-      }
-    );
-    reset();
-  };
 
   const clickToOenNav = () => setOpenNav(!openNav);
+  const clickToOpenDialog = () =>
+    setOpenDialogWorkspaces(!openDialogWorkspaces);
 
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
@@ -97,41 +66,18 @@ const SidebarComponent = () => {
         placeholder={undefined}
         variant="small"
         color="blue-gray"
-        className="flex items-center gap-x-2 p-1 font-medium"
+        className="flex flex-col gap-2 p-1 font-medium"
       >
         <span>Proyectos en desarrollo</span>
-        <CopyPlusIcon
-          onClick={() => setToggleInputAddWorkspaces(!toggleInputAddWorkspaces)}
-          className="w-5 cursor-pointer"
-        />
-      </Typography>
-      <Typography placeholder={undefined} as="li">
-        <form
-          className={`pb-4 ${
-            toggleInputAddWorkspaces ? "flex" : "hidden"
-          } duration-150 transition-all`}
-          onSubmit={handleSubmit(onSubmit)}
+        <Button
+          placeholder={undefined}
+          color="gray"
+          className="text-[10px] p-1"
+          size="sm"
+          onClick={clickToOpenDialog}
         >
-          <input
-            {...register("name")}
-            className={`text-dark ${
-              errors.name ? "bg-red-300" : "bg-white"
-            } border border- rounded-y-md rounded-l-md w-full flex items-center  px-1 py-2 focus:outline-none`}
-          />
-          <button
-            className={`rounded-md rounded-l-none ${
-              errors.name ? "bgblack-red-500" : "bg-primary"
-            } ${
-              mutation.isLoading && "pointer-events-none"
-            } bg-primary py-2 text-white duration-100 hover:bg-extradark hover:text-white`}
-          >
-            <PlusIcon
-              className={`${
-                mutation.isLoading && "rotate-180"
-              }  transition-all duration-1000`}
-            />
-          </button>
-        </form>
+          agregar proyecto
+        </Button>
       </Typography>
 
       {workspaces_list?.map((item) => (
@@ -144,7 +90,7 @@ const SidebarComponent = () => {
           placeholder={undefined}
         >
           <StackIcon className="w-5" />
-          <Link onClick={clickToOenNav} href={`/spaces/${item.id}`}>
+          <Link onClick={clickToOenNav} href={`/workspaces/${item.id}`}>
             {item.name}
           </Link>
         </Typography>
@@ -154,8 +100,14 @@ const SidebarComponent = () => {
 
   return (
     <>
-      <ToastContainer containerId={"NotifyAddWorkspacesSuccessfully"} />
-      <ToastContainer containerId={"NotifyAddWorkspacesError"} />
+      <Dialog
+        open={openDialogWorkspaces}
+        handler={clickToOpenDialog}
+        placeholder={undefined}
+      >
+        <WorkspacesCreateForm clickToOpenDialog={clickToOpenDialog} />
+      </Dialog>
+
       <Navbar
         className="mx-auto max-w-screen-xl px-6 py-3"
         placeholder={undefined}
@@ -179,35 +131,9 @@ const SidebarComponent = () => {
             placeholder={undefined}
           >
             {openNav ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
-              </svg>
+              <CloseIcon className="w-6 h-6" />
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                />
-              </svg>
+             <NavbarIcon className="w-6 h-6" /> 
             )}
           </IconButton>
         </div>

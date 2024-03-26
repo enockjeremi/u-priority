@@ -1,3 +1,8 @@
+"use client";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "react-query";
+import { joiResolver } from "@hookform/resolvers/joi";
+
 import {
   Card,
   Input,
@@ -8,20 +13,17 @@ import {
   Option,
   IconButton,
 } from "@material-tailwind/react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
 
-import { joiResolver } from "@hookform/resolvers/joi";
-import { schemaTask } from "@/app/libs/joi/schemas";
-
-import { IPriority, IStatus } from "@/types/workspaces";
-import { FormTaskValues } from "@/types/form-values";
-import { useMutation, useQueryClient } from "react-query";
-import instance from "@/app/server/utils/axios-instance";
-import { tasks } from "@/app/libs/endpoints/tasks";
-import { TODO } from "@/types/todo.types";
 import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
+
+import instance from "@/app/server/utils/axios-instance";
+import { tasks } from "@/app/libs/endpoints/tasks";
+
+import { schemaTask } from "@/app/libs/joi/schemas";
+import { IPriority, IStatus } from "@/types/workspaces";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
+import { FormTaskValues } from "@/types/form-values";
 
 const postTask = (body: FormTaskValues) => {
   const res = instance.post(tasks.createTask, body).then((res) => res.data);
@@ -55,7 +57,7 @@ export default function TaskCreateForm({
     resolver: joiResolver(schemaTask),
   });
   const queryClient = useQueryClient();
-  const mutation = useMutation((data: TODO) => {
+  const mutation = useMutation((data: FormTaskValues) => {
     return postTask(data);
   });
 

@@ -1,6 +1,4 @@
-import { Ubuntu } from "next/font/google";
 import React from "react";
-// const ubuntu = Ubuntu({ weight: "400", subsets: ["cyrillic"] });
 
 const BasicLogo = () => {
     return (

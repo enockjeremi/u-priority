@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { useRouter } from "next/navigation";
 
 import {
   Button,
@@ -15,17 +16,17 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
+import TaskCreateForm from "./task-component/task-create-form";
+import TaskEditComponent from "./task-component/task-edit-form";
 import TaskDetailComponent from "./task-component/task-detail-component";
-import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
+import SettingsIcon from "@/app/client/components/icons/settings-icon";
 
 import instance from "@/app/server/utils/axios-instance";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
 
-import TaskCreateForm from "./task-component/task-create-form";
-import TaskEditComponent from "./task-component/task-edit-form";
-import { useRouter } from "next/navigation";
-import SettingsIcon from "@/app/client/components/icons/settings-icon";
+
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
+import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 
 const TABLE_HEAD = ["Nombre", "Estado"];
 
@@ -49,13 +50,18 @@ const SpacesComponent = ({
   const [tasksInfo, setTasksInfo] = useState<ITask | null>();
 
   const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
-  const { id: spacesID } = workspaces;
+  const { id: workspacesId } = workspaces;
 
   const { data, isLoading } = useQuery<IWorkspaces>({
-    queryKey: [QUERY_KEY_TASKS.tasks_list, { spacesID, selectTasksByStatus }],
+    queryKey: [
+      QUERY_KEY_TASKS.tasks_list,
+      { workspacesId, selectTasksByStatus },
+    ],
     queryFn: async () => {
       return await instance
-        .get(workSpacesEndpoint.filterByStatus(spacesID, selectTasksByStatus))
+        .get(
+          workSpacesEndpoint.filterByStatus(workspacesId, selectTasksByStatus)
+        )
         .then((res) => res.data);
     },
   });
@@ -86,7 +92,7 @@ const SpacesComponent = ({
   const handleClickEditTask = () => setDialogToEditTasks(!dialogToEditTasks);
 
   const handleClickSettings = () => {
-    router.push(`/spaces/${workspaces.id}/settings`);
+    router.push(`/workspaces/${workspaces.id}/settings`);
   };
   return (
     <>
@@ -96,7 +102,6 @@ const SpacesComponent = ({
         handler={handleClickTaskDetail}
         className="z-10"
       >
-
         {tasksInfo ? (
           dialogToEditTasks ? (
             <TaskEditComponent

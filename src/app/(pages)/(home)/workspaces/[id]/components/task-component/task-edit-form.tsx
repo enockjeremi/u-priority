@@ -1,11 +1,8 @@
-import { CloseIcon } from "@/app/client/components/icons/close-icon";
-import { tasks } from "@/app/libs/endpoints/tasks";
-import { schemaTask } from "@/app/libs/joi/schemas";
-import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
-import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
-import instance from "@/app/server/utils/axios-instance";
-import { IPriority, IStatus, ITask } from "@/types/workspaces";
+import React from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "react-query";
 import { joiResolver } from "@hookform/resolvers/joi";
+
 import {
   Button,
   DialogBody,
@@ -17,9 +14,17 @@ import {
   Textarea,
   Typography,
 } from "@material-tailwind/react";
-import React from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+
+import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
+import { CloseIcon } from "@/app/client/components/icons/close-icon";
+
+import { tasks } from "@/app/libs/endpoints/tasks";
+import instance from "@/app/server/utils/axios-instance";
+
+import { schemaTask } from "@/app/libs/joi/schemas";
+import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
+import { IPriority, IStatus, ITask } from "@/types/workspaces";
+
 
 type FormValues = {
   name: string | undefined;

@@ -128,13 +128,6 @@ const SignUpComponent = () => {
             </Link>
           </p>
         </div>
-
-        {/*
-        {message && (
-          <div className="rounded-md bg-red-500 p-3 text-center text-white">
-            {message}
-          </div>
-        )} */}
       </form>
     </>
   );
