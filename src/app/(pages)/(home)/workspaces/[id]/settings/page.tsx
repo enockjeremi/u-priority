@@ -18,8 +18,7 @@ const getWorkspaces = async (id: number, token: any) => {
 
 const Page = async ({ params }: { params: any }) => {
   const token = cookies().get(USER_TOKEN_NAME)?.value;
-  const workspaces = await getWorkspaces(params.id, token)
-  console.log(workspaces)
+  const workspaces = await getWorkspaces(params.id, token);
   return <SettingsWorkspacesComponent workspaces={workspaces} />;
 };
 

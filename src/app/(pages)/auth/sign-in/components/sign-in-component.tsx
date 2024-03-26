@@ -33,15 +33,15 @@ const SignInComponent = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full sm:w-[500px] flex-col space-y-3 p-4 text-sm"
+        className="flex w-full flex-col space-y-3 p-4 text-sm sm:w-[500px]"
       >
-        <div className="w-full flex flex-col space-y-2">
+        <div className="flex w-full flex-col space-y-2">
           <Input {...register("email")} label="Email" crossOrigin={undefined} />
 
           {errors.email && (
             <p
               role="alert"
-              className="text-white px-2 py-2 rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-2 text-white"
             >
               {errors.email.message}
             </p>
@@ -58,7 +58,7 @@ const SignInComponent = () => {
           {errors.password && (
             <p
               role="alert"
-              className="text-white px-2 py-2 rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-2 text-white"
             >
               {errors.password.message}
             </p>
@@ -83,13 +83,13 @@ const SignInComponent = () => {
             ingresar
           </Button>
 
-          <p className="py-2 text-[12px] text-slate-500">
+          <p className="text-slate-500 py-2 text-[12px]">
             <span>¿No tienes una cuenta? </span>
             <Link
               href={"./sign-up"}
               className={`hover:text-dark ${
                 isLoading ? "pointer-events-none" : ""
-              } hover:underline underline-offset-4`}
+              } underline-offset-4 hover:underline`}
             >
               registrate
             </Link>

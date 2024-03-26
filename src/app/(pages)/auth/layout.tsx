@@ -14,12 +14,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
-  if(session) {
-    redirect('/')
+  if (session) {
+    redirect("/");
   }
   return (
     <div className="mx-auto h-screen px-2 md:w-[90%] md:px-0 lg:w-[65%]">
-      <div className="text-dark flex flex-col  h-screen w-full items-center justify-center">
+      <div className="flex h-screen w-full  flex-col items-center justify-center text-dark">
         <div className="pb-6">
           <BasicLogo />
         </div>

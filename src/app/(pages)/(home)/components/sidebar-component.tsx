@@ -23,6 +23,7 @@ import { IWorkspaces } from "@/types/workspaces";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
 import NavbarIcon from "@/app/client/components/icons/navbar-icon";
+import IsLoadingComponent from "@/app/client/components/common/is-loading-component";
 
 const SidebarComponent = () => {
   const [openNav, setOpenNav] = useState<boolean>(false);
@@ -39,7 +40,7 @@ const SidebarComponent = () => {
     };
   }, []);
 
-  const { data: workspaces_list } = useQuery<IWorkspaces[]>({
+  const { data: workspaces_list, isLoading } = useQuery<IWorkspaces[]>({
     queryKey: [QUERY_KEY_TASKS.workspaces],
     queryFn: async () =>
       await instance.get(workspaces.getAll).then((res) => res.data),
@@ -50,7 +51,7 @@ const SidebarComponent = () => {
     setOpenDialogWorkspaces(!openDialogWorkspaces);
 
   const navList = (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+    <ul className="mb-4 mt-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
         as="li"
         variant="small"
@@ -68,33 +69,44 @@ const SidebarComponent = () => {
         color="blue-gray"
         className="flex flex-col gap-2 p-1 font-medium"
       >
-        <span>Proyectos en desarrollo</span>
         <Button
           placeholder={undefined}
           color="gray"
-          className="text-[10px] p-1"
+          className="p-1 text-[10px]"
           size="sm"
           onClick={clickToOpenDialog}
         >
           agregar proyecto
         </Button>
       </Typography>
-
-      {workspaces_list?.map((item) => (
-        <Typography
-          as="li"
-          key={item.id}
-          variant="small"
-          color="blue-gray"
-          className="flex items-center gap-x-2 p-1 font-medium"
-          placeholder={undefined}
-        >
-          <StackIcon className="w-5" />
-          <Link onClick={clickToOenNav} href={`/workspaces/${item.id}`}>
-            {item.name}
-          </Link>
-        </Typography>
-      ))}
+      <IsLoadingComponent isLoading={isLoading}>
+        {workspaces_list?.length === 0 ? (
+          <Typography
+            variant="h6"
+            color="black"
+            className="text-center text-[12px]"
+            placeholder={undefined}
+          >
+            ¡Agrega tu primer proyecto!
+          </Typography>
+        ) : (
+          workspaces_list?.map((item) => (
+            <Typography
+              as="li"
+              key={item.id}
+              variant="small"
+              color="blue-gray"
+              className="flex items-center gap-x-2 p-1 font-medium"
+              placeholder={undefined}
+            >
+              <StackIcon className="w-5" />
+              <Link onClick={clickToOenNav} href={`/workspaces/${item.id}`}>
+                {item.name}
+              </Link>
+            </Typography>
+          ))
+        )}
+      </IsLoadingComponent>
     </ul>
   );
 
@@ -131,9 +143,9 @@ const SidebarComponent = () => {
             placeholder={undefined}
           >
             {openNav ? (
-              <CloseIcon className="w-6 h-6" />
+              <CloseIcon className="h-6 w-6" />
             ) : (
-             <NavbarIcon className="w-6 h-6" /> 
+              <NavbarIcon className="h-6 w-6" />
             )}
           </IconButton>
         </div>

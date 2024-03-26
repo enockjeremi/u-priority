@@ -25,7 +25,6 @@ import { schemaTask } from "@/app/libs/joi/schemas";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { IPriority, IStatus, ITask } from "@/types/workspaces";
 
-
 type FormValues = {
   name: string | undefined;
   description: string | undefined;
@@ -85,7 +84,7 @@ const TaskEditForm = ({
         onError: () => {
           notifyError("No se a podido modificar.");
         },
-      }
+      },
     );
   };
 
@@ -93,7 +92,7 @@ const TaskEditForm = ({
     <>
       <DialogHeader
         placeholder={undefined}
-        className="pb-0 flex items-center justify-between w-full"
+        className="flex w-full items-center justify-between pb-0"
       >
         <Typography placeholder={undefined} variant="h5" color="blue-gray">
           Actualizar tarea
@@ -112,7 +111,7 @@ const TaskEditForm = ({
       <DialogBody placeholder={undefined}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col w-full gap-8"
+          className="flex w-full flex-col gap-8"
         >
           <div className="w-full">
             <Input
@@ -123,7 +122,7 @@ const TaskEditForm = ({
             {errors.name && (
               <p
                 role="alert"
-                className="text-white mt-2 px-2 py-2 rounded-md bg-red-500"
+                className="mt-2 rounded-md bg-red-500 px-2 py-2 text-white"
               >
                 {errors.name.message}
               </p>
@@ -131,7 +130,7 @@ const TaskEditForm = ({
           </div>
           <div className="w-full">
             <Textarea
-              className="min-h-48 overflow-hidden resize-none"
+              className="min-h-48 resize-none overflow-hidden"
               maxLength={150}
               {...register("description")}
               label="Descripcion de la tarea"
@@ -139,13 +138,13 @@ const TaskEditForm = ({
             {errors.description && (
               <p
                 role="alert"
-                className="text-white mt-1 px-2 py-2 rounded-md bg-red-500"
+                className="mt-1 rounded-md bg-red-500 px-2 py-2 text-white"
               >
                 {errors.description.message}
               </p>
             )}
           </div>
-          <div className="w-full flex flex-col gap-4 items-center">
+          <div className="flex w-full flex-col items-center gap-4">
             <Controller
               name="statusid"
               control={control}
@@ -187,7 +186,7 @@ const TaskEditForm = ({
           </div>
           <Button
             type="submit"
-            className="w-full flex items-center justify-center"
+            className="flex w-full items-center justify-center"
             disabled={mutation.isLoading && true}
             color="green"
             size="md"

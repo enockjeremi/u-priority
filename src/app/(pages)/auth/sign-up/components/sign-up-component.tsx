@@ -32,7 +32,7 @@ const SignUpComponent = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex w-full sm:w-[500px] flex-col space-y-3 p-4 text-sm"
+        className="flex w-full flex-col space-y-3 p-4 text-sm sm:w-[500px]"
       >
         <div className="flex flex-col space-y-2">
           <Input
@@ -43,7 +43,7 @@ const SignUpComponent = () => {
           {errors.username && (
             <p
               role="alert"
-              className="text-white px-2 py-2 rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-2 text-white"
             >
               {errors.username.message}
             </p>
@@ -59,7 +59,7 @@ const SignUpComponent = () => {
           {errors.email && (
             <p
               role="alert"
-              className="text-white px-2 py-2 rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-2 text-white"
             >
               {errors.email.message}
             </p>
@@ -76,7 +76,7 @@ const SignUpComponent = () => {
           {errors.password && (
             <p
               role="alert"
-              className="text-white px-2 py-2 rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-2 text-white"
             >
               {errors.password.message}
             </p>
@@ -92,7 +92,7 @@ const SignUpComponent = () => {
           {errors.cpassword && (
             <p
               role="alert"
-              className="text-white px-2 py-2 rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-2 text-white"
             >
               {errors.cpassword.message}
             </p>
@@ -111,18 +111,18 @@ const SignUpComponent = () => {
             loading={isLoading}
             placeholder={undefined}
             color="blue-gray"
-            className="flex items-center justify-center mt-6"
+            className="mt-6 flex items-center justify-center"
             fullWidth
           >
             Registrar
           </Button>
-          <p className="py-2 text-[12px] text-slate-500">
+          <p className="text-slate-500 py-2 text-[12px]">
             <span>¿Ya tienes una cuenta? </span>
             <Link
               href={"./sign-in"}
               className={`hover:text-dark ${
                 isLoading ? "pointer-events-none" : ""
-              } hover:underline underline-offset-4`}
+              } underline-offset-4 hover:underline`}
             >
               inicia sesion
             </Link>

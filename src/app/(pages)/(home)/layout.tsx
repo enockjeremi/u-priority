@@ -12,10 +12,10 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
   if (!session) redirect("/auth/sign-in");
 
   return (
-    <div className="h-screen w-full flex flex-col">
+    <div className="flex h-screen w-full flex-col">
       <SidebarComponent />
       <div className="w-full">
-        <ToastContainer className={''} containerId="NotifySuccess" />
+        <ToastContainer className={""} containerId="NotifySuccess" />
         <ToastContainer containerId="NotifyError" />
         {children}
       </div>

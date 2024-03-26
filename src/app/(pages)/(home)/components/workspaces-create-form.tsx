@@ -44,7 +44,7 @@ const WorkspacesCreateForm = ({
         onError: () => {
           notifyError("Hubo un problema al agregar el proyecto.");
         },
-      }
+      },
     );
     reset();
   };
@@ -53,7 +53,7 @@ const WorkspacesCreateForm = ({
     <>
       <DialogBody placeholder={undefined}>
         <form
-          className="flex w-full gap-2 flex-col"
+          className="flex w-full flex-col gap-2"
           onSubmit={handleSubmit(onSubmit)}
         >
           <Input
@@ -64,14 +64,14 @@ const WorkspacesCreateForm = ({
           {errors.name && (
             <p
               role="alert"
-              className="text-white px-2 py-1 text-sm rounded-md bg-red-500"
+              className="rounded-md bg-red-500 px-2 py-1 text-sm text-white"
             >
               {errors.name.message}
             </p>
           )}
           <Button
             type="submit"
-            className="w-full flex items-center justify-center"
+            className="flex w-full items-center justify-center"
             disabled={mutation.isLoading && true}
             color="green"
             size="sm"

@@ -84,7 +84,7 @@ export default function TaskCreateForm({
         color="transparent"
         shadow={false}
       >
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <Typography placeholder={undefined} variant="h5" color="blue-gray">
             Agrega una nueva tarea
           </Typography>
@@ -101,7 +101,7 @@ export default function TaskCreateForm({
         </div>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="pt-4 mb-2 max-w-screen-lg sm:w-96"
+          className="mb-2 max-w-screen-lg pt-4 sm:w-96"
         >
           <div className="mb-1 flex flex-col gap-3">
             <Typography
@@ -124,7 +124,7 @@ export default function TaskCreateForm({
             {errors.name && (
               <p
                 role="alert"
-                className="text-white  px-2 py-0.5 rounded-md bg-red-500"
+                className="rounded-md  bg-red-500 px-2 py-0.5 text-white"
               >
                 {errors.name.message}
               </p>
@@ -149,7 +149,7 @@ export default function TaskCreateForm({
             {errors.description && (
               <p
                 role="alert"
-                className="text-white  px-2 py-0.5 rounded-md bg-red-500"
+                className="rounded-md  bg-red-500 px-2 py-0.5 text-white"
               >
                 {errors.description.message}
               </p>
@@ -174,7 +174,7 @@ export default function TaskCreateForm({
             {errors.statusid && (
               <p
                 role="alert"
-                className="text-white  px-2 py-0.5 rounded-md bg-red-500"
+                className="rounded-md  bg-red-500 px-2 py-0.5 text-white"
               >
                 {errors.statusid.message}
               </p>
@@ -200,7 +200,7 @@ export default function TaskCreateForm({
             {errors.priorityid && (
               <p
                 role="alert"
-                className="text-white  px-2 py-0.5 rounded-md bg-red-500"
+                className="rounded-md  bg-red-500 px-2 py-0.5 text-white"
               >
                 {errors.priorityid.message}
               </p>
@@ -211,7 +211,7 @@ export default function TaskCreateForm({
             placeholder={undefined}
             type="submit"
             color="green"
-            className="flex items-center justify-center mt-6"
+            className="mt-6 flex items-center justify-center"
             fullWidth
             loading={mutation.isLoading}
           >

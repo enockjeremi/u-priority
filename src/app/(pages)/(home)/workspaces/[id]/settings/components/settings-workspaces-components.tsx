@@ -68,7 +68,7 @@ const SettingsWorkspacesComponent = ({
     (id: number) => {
       return deleteWorkspaces(id);
     },
-    { retry: 0 }
+    { retry: 0 },
   );
 
   const onSubmit: SubmitHandler<any> = (data) => {
@@ -110,7 +110,7 @@ const SettingsWorkspacesComponent = ({
 
   return (
     <>
-      <div className="w-full px-2 py-6 flex flex-col gap-6">
+      <div className="flex w-full flex-col gap-6 px-2 py-6">
         <div className="flex items-center">
           <IconButton
             placeholder={undefined}
@@ -133,7 +133,7 @@ const SettingsWorkspacesComponent = ({
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full flex flex-col gap-6 border rounded-md p-3"
+          className="flex w-full flex-col gap-6 rounded-md border p-3"
         >
           <div className="flex flex-col gap-4">
             <Typography
@@ -157,7 +157,7 @@ const SettingsWorkspacesComponent = ({
             {errors.name && (
               <p
                 role="alert"
-                className="text-white px-2 py-2 rounded-md bg-red-500"
+                className="rounded-md bg-red-500 px-2 py-2 text-white"
               >
                 {errors.name.message}
               </p>
@@ -169,16 +169,16 @@ const SettingsWorkspacesComponent = ({
             type="submit"
             color="green"
             size="sm"
-            className="w-full flex items-center justify-center"
+            className="flex w-full items-center justify-center"
             placeholder={undefined}
           >
             Guardar cambios
           </Button>
         </form>
 
-        <div className="w-full flex flex-col gap-4 border rounded-md p-3 mt-4">
+        <div className="mt-4 flex w-full flex-col gap-4 rounded-md border p-3">
           <div className="flex items-center gap-2">
-            <AlertIcon className="w-4 h-4" />
+            <AlertIcon className="h-4 w-4" />
             <Typography
               variant="h6"
               color="blue-gray"
@@ -216,7 +216,7 @@ const SettingsWorkspacesComponent = ({
 
         <DialogHeader
           placeholder={undefined}
-          className="pb-0 flex items-center justify-between w-full"
+          className="flex w-full items-center justify-between pb-0"
         >
           <Typography placeholder={undefined} variant="h6" color="blue-gray">
             Confirmar
@@ -233,10 +233,10 @@ const SettingsWorkspacesComponent = ({
         </DialogHeader>
         <DialogBody className="pt-0" placeholder={undefined}>
           <div className="text-justify">
-            <p className="text-sm text-justify">
+            <p className="text-justify text-sm">
               Para confirmar la eliminacion escriba el nombre de el proyecto:
             </p>
-            <p className="text-sm font-bold py-2">{workspaces.name}</p>
+            <p className="py-2 text-sm font-bold">{workspaces.name}</p>
           </div>
           <Input
             crossOrigin={undefined}
@@ -251,7 +251,7 @@ const SettingsWorkspacesComponent = ({
         <DialogFooter placeholder={undefined}>
           <Button
             type="submit"
-            className="w-full flex items-center justify-center"
+            className="flex w-full items-center justify-center"
             disabled={!isMatch}
             color="red"
             size="sm"

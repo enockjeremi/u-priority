@@ -24,11 +24,9 @@ import SettingsIcon from "@/app/client/components/icons/settings-icon";
 import instance from "@/app/server/utils/axios-instance";
 import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
 
-
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
-
-const TABLE_HEAD = ["Nombre", "Estado"];
+import TasksListComponent from "./task-component/task-list-component";
 
 const SpacesComponent = ({
   workspaces,
@@ -52,7 +50,7 @@ const SpacesComponent = ({
   const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
   const { id: workspacesId } = workspaces;
 
-  const { data, isLoading } = useQuery<IWorkspaces>({
+  const { data: tasks, isLoading } = useQuery<IWorkspaces>({
     queryKey: [
       QUERY_KEY_TASKS.tasks_list,
       { workspacesId, selectTasksByStatus },
@@ -60,40 +58,30 @@ const SpacesComponent = ({
     queryFn: async () => {
       return await instance
         .get(
-          workSpacesEndpoint.filterByStatus(workspacesId, selectTasksByStatus)
+          workSpacesEndpoint.filterByStatus(workspacesId, selectTasksByStatus),
         )
         .then((res) => res.data);
     },
   });
-
-  const taskList = data;
-  const taskListEmpty =
-    taskList?.tasks?.length !== undefined ? taskList.tasks.length > 0 : false;
 
   const handleSelectStatusChange = (value: any) => {
     setSelectTasksByStatus(Number(value));
     queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
   };
 
-  //Remover o mejorar
-  const stringlent = (strg: string | undefined) => {
-    if (!strg) return "";
-    if (strg.length > 17) {
-      return strg.substring(0, 17) + "...";
-    }
-    return strg;
-  };
-
-  const handleClickAddTask = () => setDialogAddTask(!dialogAddTask);
-  const handleClickTaskDetail = () => {
+  const handleClickTaskDetail = (task?: any) => {
+    if (task) setTasksInfo(task);
     setDialogToEditTasks(false);
     setDialogTaskDetail(!dialogTaskDetail);
   };
+
   const handleClickEditTask = () => setDialogToEditTasks(!dialogToEditTasks);
+  const handleClickAddTask = () => setDialogAddTask(!dialogAddTask);
 
   const handleClickSettings = () => {
     router.push(`/workspaces/${workspaces.id}/settings`);
   };
+
   return (
     <>
       <Dialog
@@ -123,9 +111,9 @@ const SpacesComponent = ({
         )}
       </Dialog>
 
-      <div className="w-full pt-6 px-2">
-        <div className="w-full flex flex-col gap-4">
-          <div className="flex justify-between items-center">
+      <div className="w-full px-2 pt-6">
+        <div className="flex w-full flex-col gap-4 pb-2">
+          <div className="flex items-center justify-between">
             <Typography
               // className="ml-2"
               placeholder={undefined}
@@ -168,106 +156,11 @@ const SpacesComponent = ({
           </Button>
         </div>
 
-        <Card placeholder={undefined}>
-          <CardBody className="px-0 overflow-hidden" placeholder={undefined}>
-            <table className="w-full min-w-max table-auto text-left">
-              <thead>
-                <tr>
-                  {TABLE_HEAD.map((head) => (
-                    <th
-                      key={head}
-                      className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                    >
-                      <Typography
-                        placeholder={undefined}
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
-                      >
-                        {head}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td className="p-4">
-                      <div className="flex justify-center w-full items-center gap-3">
-                        <Spinner />
-                      </div>
-                    </td>
-                  </tr>
-                ) : taskListEmpty ? (
-                  taskList?.tasks?.map((item, index) => {
-                    const isLast = index === taskList?.tasks?.length - 1;
-                    const classes = isLast
-                      ? "p-4"
-                      : "p-4 border-b border-blue-gray-50";
-                    return (
-                      <tr key={item.id}>
-                        <td className={classes}>
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={() => {
-                                setTasksInfo(item);
-                                setDialogTaskDetail(!dialogTaskDetail);
-                              }}
-                            >
-                              <Typography
-                                placeholder={undefined}
-                                variant="small"
-                                color="blue-gray"
-                                className="font-bold"
-                              >
-                                {stringlent(item.name)}
-                              </Typography>
-                            </button>
-                          </div>
-                        </td>
-
-                        <td className={classes}>
-                          <div className="w-max">
-                            <Chip
-                              size="sm"
-                              variant="ghost"
-                              value={item?.status?.status}
-                              color={
-                                item?.status?.id === 1
-                                  ? "green"
-                                  : item?.status?.id === 2
-                                  ? "blue"
-                                  : item?.status?.id === 3
-                                  ? "amber"
-                                  : "red"
-                              }
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td className="pt-5 pl-4 pr-4">
-                      <div className="flex items-center gap-3">
-                        <Typography
-                          placeholder={undefined}
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold"
-                        >
-                          Aun no has asignado ninguna tarea...
-                        </Typography>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </CardBody>
-        </Card>
+        <TasksListComponent
+          openDetail={handleClickTaskDetail}
+          isLoading={isLoading}
+          tasks={tasks?.tasks}
+        />
       </div>
 
       <Dialog

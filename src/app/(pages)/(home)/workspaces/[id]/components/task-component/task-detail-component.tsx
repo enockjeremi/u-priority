@@ -21,6 +21,7 @@ import instance from "@/app/server/utils/axios-instance";
 import { tasks } from "@/app/libs/endpoints/tasks";
 
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
+import IsLoadingComponent from "@/app/client/components/common/is-loading-component";
 
 const getTasksById = (id: number | undefined) => {
   if (!id) return null;
@@ -44,7 +45,7 @@ const TaskDetailComponent = ({
     {
       enabled: tasksId !== undefined,
       retry: 0,
-    }
+    },
   );
 
   const mutation = useMutation(
@@ -53,7 +54,7 @@ const TaskDetailComponent = ({
         .delete(tasks.deleteTasks(id))
         .then((res) => res.data);
     },
-    { retry: 0 }
+    { retry: 0 },
   );
 
   const queryClient = useQueryClient();
@@ -72,118 +73,106 @@ const TaskDetailComponent = ({
   };
 
   return (
-    <>
-      {isLoading ? (
-        <div className="w-full flex h-[50vh] items-center justify-center">
-          <Spinner className="h-8 w-8" />
-        </div>
-      ) : (
-        <>
-          <DialogHeader
-            placeholder={undefined}
-            className="flex justify-between items-center"
-          >
-            <Typography
-              placeholder={undefined}
-              className="w-full"
-              variant="h5"
-              color="blue-gray"
-            >
-              {task.name}
-            </Typography>
-            <IconButton
-              placeholder={undefined}
-              color="blue-gray"
-              size="sm"
-              variant="text"
-              className="w-[20%]"
-              onClick={clickToCancel}
-            >
-              <CloseIcon />
-            </IconButton>
-          </DialogHeader>
-          <DialogBody placeholder={undefined}>
-            <div className="flex flex-col gap-8 justify-between">
-              <Typography
-                placeholder={undefined}
-                color="gray"
-                variant="paragraph"
-              >
-                {task.description}
-              </Typography>
-              <div>
-                <div className="flex justify-between items-center">
-                  <Chip size="md" value={task?.status.status || ""} />
-                  <Chip
-                    size="md"
-                    value={task?.priority.priority || ""}
-                    color={
-                      task?.priority.id === 1
-                        ? "green"
-                        : task?.priority.id === 2
-                        ? "blue"
-                        : task?.priority.id === 3
+    <IsLoadingComponent isLoading={isLoading}>
+      <DialogHeader
+        placeholder={undefined}
+        className="flex items-center justify-between"
+      >
+        <Typography
+          placeholder={undefined}
+          className="w-full"
+          variant="h5"
+          color="blue-gray"
+        >
+          {task?.name}
+        </Typography>
+        <IconButton
+          placeholder={undefined}
+          color="blue-gray"
+          size="sm"
+          variant="text"
+          className="w-[20%]"
+          onClick={clickToCancel}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogHeader>
+      <DialogBody placeholder={undefined}>
+        <div className="flex flex-col justify-between gap-8">
+          <Typography placeholder={undefined} color="gray" variant="paragraph">
+            {task?.description}
+          </Typography>
+          <div>
+            <div className="flex items-center justify-between">
+              <Chip size="md" value={task?.status.status || ""} />
+              <Chip
+                size="md"
+                value={task?.priority.priority || ""}
+                color={
+                  task?.priority.id === 1
+                    ? "green"
+                    : task?.priority.id === 2
+                      ? "blue"
+                      : task?.priority.id === 3
                         ? "amber"
                         : "red"
-                    }
-                  />
-                </div>
-              </div>
+                }
+              />
             </div>
-          </DialogBody>
-          <DialogFooter
+          </div>
+        </div>
+      </DialogBody>
+      <DialogFooter
+        placeholder={undefined}
+        className="flex flex-col justify-between"
+      >
+        <div className="flex w-full justify-between">
+          <Button
+            variant="text"
+            color="red"
+            onClick={() => setToggleConfirm(!toggleComfirm)}
+            className="mr-1"
+            size="sm"
             placeholder={undefined}
-            className="flex flex-col justify-between"
           >
-            <div className="flex w-full justify-between">
+            <TrashIcon className="h-6 w-6" />
+          </Button>
+          <Button
+            variant="gradient"
+            color="green"
+            onClick={() => handleClickEditTask()}
+            disabled={toggleComfirm}
+            placeholder={undefined}
+          >
+            <span>Editar</span>
+          </Button>
+        </div>
+        {toggleComfirm ? (
+          <div className="flex flex-col items-center space-y-1 pt-3">
+            <span>¿Esta seguro de eliminar esta tarea?</span>
+            <div className="flex items-center gap-3">
               <Button
-                variant="text"
-                color="red"
-                onClick={() => setToggleConfirm(!toggleComfirm)}
-                className="mr-1"
+                color="green"
                 size="sm"
+                onClick={() => setToggleConfirm(!toggleComfirm)}
                 placeholder={undefined}
               >
-                <TrashIcon className="w-6 h-6" />
+                cancelar
               </Button>
               <Button
-                variant="gradient"
-                color="green"
-                onClick={() => handleClickEditTask()}
-                disabled={toggleComfirm}
+                color="red"
+                size="sm"
+                onClick={() => handleClickDeleteTask(tasksId)}
                 placeholder={undefined}
+                loading={mutation.isLoading}
               >
-                <span>Editar</span>
+                confirmar
               </Button>
             </div>
-            {toggleComfirm ? (
-              <div className="flex flex-col pt-3 space-y-1 items-center">
-                <span>¿Esta seguro de eliminar esta tarea?</span>
-                <div className="flex items-center gap-3">
-                  <Button
-                    color="green"
-                    size="sm"
-                    onClick={() => setToggleConfirm(!toggleComfirm)}
-                    placeholder={undefined}
-                  >
-                    cancelar
-                  </Button>
-                  <Button
-                    color="red"
-                    size="sm"
-                    onClick={() => handleClickDeleteTask(tasksId)}
-                    placeholder={undefined}
-                    loading={mutation.isLoading}
-                  >
-                    confirmar
-                  </Button>
-                </div>
-              </div>
-            ) : null}
-          </DialogFooter>
-        </>
-      )}
-    </>
+          </div>
+        ) : null}
+      </DialogFooter>
+    </IsLoadingComponent>
   );
 };
 
