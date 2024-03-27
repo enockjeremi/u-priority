@@ -34,12 +34,12 @@ const TasksListComponent = ({
                 No tienes tareas disponibles.
               </Typography>
             ) : (
-              <>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {tasks?.map((task) => (
                   <Button
                     key={task.id}
                     placeholder={undefined}
-                    variant="text"
+                    variant="outlined"
                     color="black"
                     type="button"
                     onClick={() => {
@@ -65,7 +65,7 @@ const TasksListComponent = ({
                     />
                   </Button>
                 ))}
-              </>
+              </div>
             )}
           </IsLoadingComponent>
         </div>

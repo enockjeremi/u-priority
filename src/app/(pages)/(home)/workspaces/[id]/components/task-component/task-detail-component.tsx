@@ -42,10 +42,7 @@ const TaskDetailComponent = ({
   const { data: task, isLoading } = useQuery(
     ["task", tasksId],
     () => getTasksById(tasksId),
-    {
-      enabled: tasksId !== undefined,
-      retry: 0,
-    },
+    { retry: 0 },
   );
 
   const mutation = useMutation(
@@ -84,7 +81,7 @@ const TaskDetailComponent = ({
           variant="h5"
           color="blue-gray"
         >
-          {task?.name}
+          {task?.name || ""}
         </Typography>
         <IconButton
           placeholder={undefined}
@@ -100,7 +97,7 @@ const TaskDetailComponent = ({
       <DialogBody placeholder={undefined}>
         <div className="flex flex-col justify-between gap-8">
           <Typography placeholder={undefined} color="gray" variant="paragraph">
-            {task?.description}
+            {task?.description || ""}
           </Typography>
           <div>
             <div className="flex items-center justify-between">

@@ -115,7 +115,7 @@ const SpacesComponent = ({
         <div className="flex w-full flex-col gap-4 pb-2">
           <div className="flex items-center justify-between">
             <Typography
-              // className="ml-2"
+              className="lg:ml-4 md:text-2xl"
               placeholder={undefined}
               variant="h6"
               color="blue-gray"
@@ -133,7 +133,7 @@ const SpacesComponent = ({
               <SettingsIcon />
             </IconButton>
           </div>
-          <div className="pt-2">
+          <div className="flex w-full flex-col items-center justify-between space-y-3 lg:space-y-0 lg:gap-4 lg:flex-row">
             <Select
               onChange={handleSelectStatusChange}
               label="Selecciona por estado"
@@ -145,15 +145,16 @@ const SpacesComponent = ({
                 </Option>
               ))}
             </Select>
+            <Button
+              onClick={handleClickAddTask}
+              size="md"
+              className="w-full"
+              placeholder={undefined}
+              color="green"
+            >
+              Agregar tarea
+            </Button>
           </div>
-          <Button
-            onClick={handleClickAddTask}
-            size="sm"
-            placeholder={undefined}
-            color="green"
-          >
-            Agregar tarea
-          </Button>
         </div>
 
         <TasksListComponent

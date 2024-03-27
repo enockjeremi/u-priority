@@ -121,7 +121,7 @@ const SidebarComponent = () => {
       </Dialog>
 
       <Navbar
-        className="mx-auto max-w-screen-xl px-6 py-3"
+        className="mx-auto max-w-screen-xl sm:max-w-4xl px-6 py-3 lg:mt-2"
         placeholder={undefined}
       >
         <div className="flex items-center justify-between text-blue-gray-900">

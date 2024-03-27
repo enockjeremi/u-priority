@@ -14,7 +14,7 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex h-screen w-full flex-col">
       <SidebarComponent />
-      <div className="w-full">
+      <div className="w-full sm:max-w-4xl mx-auto">
         <ToastContainer className={""} containerId="NotifySuccess" />
         <ToastContainer containerId="NotifyError" />
         {children}
