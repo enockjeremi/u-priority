@@ -9,13 +9,10 @@ type IUserSession = {
 };
 
 const HomeComponent = ({ session }: { session: IUserSession }) => {
-  const onSignOut = useSignOut();
-
   return (
     <>
       <div className="">
         <h1>{session.username}</h1>
-        <button onClick={onSignOut}>Cerrar sesion</button>
         <div>Home</div>
       </div>
     </>
