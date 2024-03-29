@@ -12,6 +12,9 @@ import {
   Select,
   Option,
   IconButton,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
 } from "@material-tailwind/react";
 
 import { notifyError, notifySuccess } from "@/app/libs/react-toastify";
@@ -78,13 +81,8 @@ export default function TaskCreateForm({
 
   return (
     <>
-      <Card
-        placeholder={undefined}
-        className="p-4"
-        color="transparent"
-        shadow={false}
-      >
-        <div className="flex items-center justify-between">
+      <DialogHeader className="py-2" placeholder={undefined}>
+        <div className="flex w-full items-center justify-between">
           <Typography placeholder={undefined} variant="h5" color="blue-gray">
             Agrega una nueva tarea
           </Typography>
@@ -99,9 +97,12 @@ export default function TaskCreateForm({
             <CloseIcon />
           </IconButton>
         </div>
+      </DialogHeader>
+      <DialogBody className="py-0" placeholder={undefined}>
         <form
+          id="createTaskForm"
           onSubmit={handleSubmit(onSubmit)}
-          className="mb-2 max-w-screen-lg pt-4 sm:w-96"
+          className="max-w-screen-lg "
         >
           <div className="mb-1 flex flex-col gap-3">
             <Typography
@@ -154,31 +155,6 @@ export default function TaskCreateForm({
                 {errors.description.message}
               </p>
             )}
-            <Controller
-              name="statusid"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  label="Estado"
-                  placeholder={"¿Que prioridad tiene esta tarea?"}
-                >
-                  {statusList?.map((item) => (
-                    <Option key={item.id} value={item?.id?.toString()}>
-                      {item.status}
-                    </Option>
-                  ))}
-                </Select>
-              )}
-            />
-            {errors.statusid && (
-              <p
-                role="alert"
-                className="rounded-md  bg-red-500 px-2 py-0.5 text-white"
-              >
-                {errors.statusid.message}
-              </p>
-            )}
 
             <Controller
               control={control}
@@ -206,19 +182,21 @@ export default function TaskCreateForm({
               </p>
             )}
           </div>
-
-          <Button
-            placeholder={undefined}
-            type="submit"
-            color="green"
-            className="mt-6 flex items-center justify-center"
-            fullWidth
-            loading={mutation.isLoading}
-          >
-            Agregar
-          </Button>
         </form>
-      </Card>
+      </DialogBody>
+      <DialogFooter placeholder={undefined}>
+        <Button
+          form="createTaskForm"
+          placeholder={undefined}
+          type="submit"
+          color="green"
+          className="flex items-center justify-center"
+          fullWidth
+          loading={mutation.isLoading}
+        >
+          Agregar
+        </Button>
+      </DialogFooter>
     </>
   );
 }

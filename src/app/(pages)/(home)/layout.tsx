@@ -12,7 +12,7 @@ const HomeLayout = async ({ children }: { children: ReactNode }) => {
   if (!session) redirect("/auth/sign-in");
 
   return (
-    <div className="flex bg-gray-100 h-screen w-full flex-col md:flex-row">
+    <div className="flex h-screen w-full flex-col md:flex-row">
       <MenuResponsive session={session} />
       <div className="w-full sm:max-w-5xl mx-auto py-4">
         <ToastContainer className={""} containerId="NotifySuccess" />

@@ -24,6 +24,7 @@ import Link from "next/link";
 import WorkspacesCreateForm from "../workspaces-create-form";
 import { useSignOut } from "@/app/client/hooks/useSignOut";
 import UserIcon from "@/app/client/components/icons/user-icon";
+import { usePathname } from "next/navigation";
 
 type IUserSession = {
   email: string;
@@ -32,6 +33,8 @@ type IUserSession = {
 };
 
 const MenuResponsive = ({ session }: { session: IUserSession }) => {
+  const pathname = usePathname();
+
   const onSignOut = useSignOut();
   const { data, isLoading } = useQuery<IWorkspaces[]>({
     queryKey: [QUERY_KEY_TASKS.workspaces],
@@ -47,14 +50,22 @@ const MenuResponsive = ({ session }: { session: IUserSession }) => {
 
   const navList = (
     <List placeholder={undefined}>
-      <ListItem placeholder={undefined} className="text-sm">
+      <ListItem
+        selected={pathname === "/profile"}
+        placeholder={undefined}
+        className="text-sm"
+      >
         <ListItemPrefix placeholder={undefined}>
           <UserIcon className="w-5" />
         </ListItemPrefix>
         <span className="first-letter:uppercase">{session.username}</span>
       </ListItem>
       <Link href={"/"}>
-        <ListItem placeholder={undefined} className="text-sm">
+        <ListItem
+          selected={pathname === "/"}
+          placeholder={undefined}
+          className="text-sm"
+        >
           <ListItemPrefix placeholder={undefined}>
             <PresentationIcon className="w-5" />
           </ListItemPrefix>
@@ -91,7 +102,11 @@ const MenuResponsive = ({ session }: { session: IUserSession }) => {
         ) : (
           data?.map((item) => (
             <Link href={`/workspaces/${item.id}`} key={item.id}>
-              <ListItem placeholder={undefined} className="text-sm">
+              <ListItem
+                selected={pathname === `/workspaces/${item.id}`}
+                placeholder={undefined}
+                className="text-sm"
+              >
                 <ListItemPrefix placeholder={undefined}>
                   <StackIcon className="w-5" />
                 </ListItemPrefix>

@@ -19,8 +19,8 @@ export default function RootLayout({
   return (
     <QueryClientServerProvider>
       <html lang="es">
-        <body>
-          <div className="mx-auto h-screen text-sm md:px-0">{children}</div>
+        <body className="mx-auto h-screen text-sm md:px-0 bg-gray-100">
+          {children}
         </body>
       </html>
     </QueryClientServerProvider>

@@ -34,7 +34,7 @@ const WorkspacesCreateForm = ({
 
   const onSubmit: SubmitHandler<FormWorkspacesValues> = (data) => {
     mutation.mutate(
-      { name: data.name },
+      { name: data.name.trim() },
       {
         onSuccess: () => {
           queryClient.invalidateQueries(QUERY_KEY_TASKS.workspaces);

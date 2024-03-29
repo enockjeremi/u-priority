@@ -11,7 +11,7 @@ export default function SidebarComponent({
   return (
     <>
       <Card
-        className="hidden h-[calc(100vh)] w-full max-w-[16rem] rounded-none p-1 shadow-xl shadow-blue-gray-900/5 md:block"
+        className="hidden h-[calc(100vh)] w-full max-w-[16rem] rounded-lg rounded-t-none p-1 shadow-xl shadow-blue-gray-900/5 md:block"
         placeholder={undefined}
       >
         <div className="mb-2 p-4">

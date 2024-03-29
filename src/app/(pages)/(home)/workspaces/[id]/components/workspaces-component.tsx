@@ -168,6 +168,7 @@ const SpacesComponent = ({
         placeholder={undefined}
         open={dialogAddTask}
         handler={handleClickAddTask}
+        size="md"
       >
         <TaskCreateForm
           statusList={statusList}

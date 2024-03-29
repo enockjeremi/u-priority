@@ -14,6 +14,9 @@ import { IWorkspaces } from "@/types/workspaces";
 import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
+  Card,
+  CardBody,
+  CardFooter,
   Dialog,
   DialogBody,
   DialogFooter,
@@ -75,6 +78,7 @@ const SettingsWorkspacesComponent = ({
     const body = { name: data.name.trim() };
     mutationUpdate.mutate(body, {
       onSuccess: () => {
+        queryClient.invalidateQueries([QUERY_KEY_TASKS.workspaces]);
         notifySuccess("Proyecto modificado.");
       },
       onError: () => {
@@ -96,9 +100,9 @@ const SettingsWorkspacesComponent = ({
   };
 
   const handleClickConfirmDelete = () => {
-    mutationDelete.mutate(workspaces.id, {
+    mutationDelete.mutateAsync(workspaces.id, {
       onSuccess: () => {
-        queryClient.invalidateQueries(QUERY_KEY_TASKS.workspaces);
+        queryClient.invalidateQueries([QUERY_KEY_TASKS.workspaces]);
         notifySuccess("Proyecto eliminado.");
         router.replace("/");
       },
@@ -131,80 +135,92 @@ const SettingsWorkspacesComponent = ({
           </Typography>
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex w-full flex-col gap-6 rounded-md border p-3"
-        >
-          <div className="flex flex-col gap-4">
-            <Typography
-              variant="h6"
-              color="blue-gray"
-              className="-mb-3"
+        <Card className="mt-6 w-full" placeholder={undefined}>
+          <CardBody placeholder={undefined}>
+            <form
+              id="modifWorkspaces"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <div className="flex flex-col gap-4">
+                <Typography
+                  variant="h6"
+                  color="blue-gray"
+                  className="-mb-3"
+                  placeholder={undefined}
+                >
+                  Nombre de el proyecto:
+                </Typography>
+                <Input
+                  crossOrigin={undefined}
+                  size="md"
+                  {...register("name")}
+                  defaultValue={workspaces.name}
+                  className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+                  labelProps={{
+                    className: "before:content-none after:content-none",
+                  }}
+                />
+                {errors.name && (
+                  <p
+                    role="alert"
+                    className="rounded-md bg-red-500 px-2 py-2 text-white"
+                  >
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+            </form>
+          </CardBody>
+          <CardFooter className="pt-0" placeholder={undefined}>
+            <Button
+              loading={mutationUpdate.isLoading}
+              fullWidth
+              type="submit"
+              form="modifWorkspaces"
+              color="green"
+              size="sm"
+              className="flex w-full items-center justify-center"
               placeholder={undefined}
             >
-              Nombre de el proyecto:
-            </Typography>
-            <Input
-              crossOrigin={undefined}
-              size="md"
-              {...register("name")}
-              defaultValue={workspaces.name}
-              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
-            />
-            {errors.name && (
-              <p
-                role="alert"
-                className="rounded-md bg-red-500 px-2 py-2 text-white"
-              >
-                {errors.name.message}
-              </p>
-            )}
-          </div>
-          <Button
-            loading={mutationUpdate.isLoading}
-            fullWidth
-            type="submit"
-            color="green"
-            size="sm"
-            className="flex w-full items-center justify-center"
-            placeholder={undefined}
-          >
-            Guardar cambios
-          </Button>
-        </form>
+              Guardar cambios
+            </Button>
+          </CardFooter>
+        </Card>
 
-        <div className="mt-4 flex w-full flex-col gap-4 rounded-md border p-3">
-          <div className="flex items-center gap-2">
-            <AlertIcon className="h-4 w-4" />
+        <Card className="mt-6 w-full" placeholder={undefined}>
+          <CardBody placeholder={undefined}>
+            <div className="flex items-center gap-2 py-1">
+              <AlertIcon className="h-4 w-4" />
+              <Typography
+                variant="h6"
+                color="blue-gray"
+                placeholder={undefined}
+                className="text-sm"
+              >
+                Zona de riesgo
+              </Typography>
+            </div>
             <Typography
-              variant="h6"
-              color="blue-gray"
               placeholder={undefined}
-              className="text-sm"
+              className=" text-justify"
+              variant="small"
             >
-              Zona de riesgo
+              Si deseas eliminar este proyecto, ten en cuenta que las tareas
+              adjuntas se eliminarán de forma permanente.
             </Typography>
-          </div>
-          <Typography
-            placeholder={undefined}
-            className=" text-justify"
-            variant="small"
-          >
-            Si deseas eliminar este proyecto, ten en cuenta que las tareas
-            adjuntas se eliminarán de forma permanente.
-          </Typography>
-          <Button
-            onClick={handleClickDelete}
-            color="red"
-            size="sm"
-            placeholder={undefined}
-          >
-            Eliminar proyecto
-          </Button>
-        </div>
+          </CardBody>
+          <CardFooter className="pt-0" placeholder={undefined}>
+            <Button
+              onClick={handleClickDelete}
+              color="red"
+              size="sm"
+              placeholder={undefined}
+              fullWidth
+            >
+              Eliminar proyecto
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
 
       <Dialog
@@ -259,7 +275,7 @@ const SettingsWorkspacesComponent = ({
             onClick={handleClickConfirmDelete}
             loading={mutationDelete.isLoading}
           >
-            aceptar
+            eliminar
           </Button>
         </DialogFooter>
       </Dialog>

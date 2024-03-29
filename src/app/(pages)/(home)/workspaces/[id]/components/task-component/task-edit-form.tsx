@@ -6,6 +6,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import {
   Button,
   DialogBody,
+  DialogFooter,
   DialogHeader,
   IconButton,
   Input,
@@ -110,6 +111,7 @@ const TaskEditForm = ({
       </DialogHeader>
       <DialogBody placeholder={undefined}>
         <form
+          id="editTaskForm"
           onSubmit={handleSubmit(onSubmit)}
           className="flex w-full flex-col gap-8"
         >
@@ -184,19 +186,23 @@ const TaskEditForm = ({
               )}
             />
           </div>
-          <Button
-            type="submit"
-            className="flex w-full items-center justify-center"
-            disabled={mutation.isLoading && true}
-            color="green"
-            size="md"
-            placeholder={undefined}
-            loading={mutation.isLoading}
-          >
-            Guardar Cambios
-          </Button>
         </form>
       </DialogBody>
+
+      <DialogFooter placeholder={undefined}>
+        <Button
+          type="submit"
+          form="editTaskForm"
+          className="flex w-full items-center justify-center"
+          disabled={mutation.isLoading && true}
+          color="green"
+          size="md"
+          placeholder={undefined}
+          loading={mutation.isLoading}
+        >
+          Guardar Cambios
+        </Button>
+      </DialogFooter>
     </>
   );
 };
