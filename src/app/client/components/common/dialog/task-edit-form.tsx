@@ -38,18 +38,26 @@ const putTask = (id: number | undefined, body: FormValues) => {
   return res;
 };
 
+const priorityList = [
+  { id: 1, priority: "A" },
+  { id: 2, priority: "B" },
+  { id: 3, priority: "C" },
+  { id: 4, priority: "D" },
+];
+
+const statusList = [
+  { id: 1, status: "Completado" },
+  { id: 2, status: "En desarrollo" },
+  { id: 3, status: "Pendiente" },
+  { id: 4, status: "En pausa" },
+];
+
 const TaskEditForm = ({
   taskToEdit,
-  statusList,
-  priorityList,
-  handleClickTaskDetail,
-  handleClickEditTask,
+  handler,
 }: {
-  taskToEdit: ITask;
-  statusList: IStatus[];
-  priorityList: IPriority[];
-  handleClickTaskDetail: () => void;
-  handleClickEditTask: () => void;
+  taskToEdit: ITask | undefined;
+  handler: () => void;
 }) => {
   const {
     control,
@@ -58,10 +66,10 @@ const TaskEditForm = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: taskToEdit.name,
-      description: taskToEdit.description,
-      statusid: taskToEdit.status.id?.toString(),
-      priorityid: taskToEdit.priority.id?.toString(),
+      name: taskToEdit?.name,
+      description: taskToEdit?.description,
+      statusid: taskToEdit?.status?.id?.toString(),
+      priorityid: taskToEdit?.priority?.id?.toString(),
     },
     resolver: joiResolver(schemaTask),
   });
@@ -79,7 +87,7 @@ const TaskEditForm = ({
         onSuccess: () => {
           queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
           queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks);
-          handleClickTaskDetail();
+          handler();
           notifySuccess("Tarea modificada");
         },
         onError: () => {
@@ -104,7 +112,7 @@ const TaskEditForm = ({
           color="blue-gray"
           size="sm"
           variant="text"
-          onClick={handleClickEditTask}
+          // onClick={handleClickEditTask}
         >
           <CloseIcon />
         </IconButton>
@@ -154,7 +162,7 @@ const TaskEditForm = ({
                 <Select
                   {...field}
                   size="md"
-                  defaultValue={taskToEdit.status.status}
+                  defaultValue={taskToEdit?.status?.status}
                   placeholder={undefined}
                   label="Estado"
                 >
@@ -172,7 +180,7 @@ const TaskEditForm = ({
               render={({ field }) => (
                 <Select
                   {...field}
-                  defaultValue={taskToEdit.priority.priority}
+                  defaultValue={taskToEdit?.priority?.priority}
                   label="Prioridad"
                   size="md"
                   placeholder={undefined}

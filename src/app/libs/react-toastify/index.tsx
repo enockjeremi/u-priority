@@ -20,7 +20,7 @@ export const notifySuccess = (msg: string) =>
   });
 
 export const notifyError = (msg: string) =>
-  toast.success(msg, {
+  toast.error(msg, {
     position: POSITION,
     autoClose: AUTO_CLOSE,
     hideProgressBar: false,

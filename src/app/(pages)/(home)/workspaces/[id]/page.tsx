@@ -8,28 +8,6 @@ import { status } from "@/app/libs/endpoints/status";
 import axios from "axios";
 import { priority } from "@/app/libs/endpoints/priority";
 
-const getAllStatus = async (token: any) => {
-  const res = await axios
-    .get(status.getAll, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => res.data);
-  return res;
-};
-
-const getAllPriority = async (token: any) => {
-  const res = await axios
-    .get(priority.getAll, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => res.data);
-  return res;
-};
-
 const getWorkspaces = async (id: number, token: any) => {
   const res = await axios
     .get(workspaces.getBy(id), {
@@ -45,16 +23,8 @@ const Page = async ({ params }: { params: any }) => {
   const token = cookies().get(USER_TOKEN_NAME)?.value;
 
   const workspaces = await getWorkspaces(params.id, token);
-  const statusList = await getAllStatus(token);
-  const priorityList = await getAllPriority(token);
 
-  return (
-    <WorkspacesComponent
-      workspaces={workspaces}
-      statusList={statusList}
-      priorityList={priorityList}
-    />
-  );
+  return <WorkspacesComponent workspaces={workspaces} />;
 };
 
 export default Page;

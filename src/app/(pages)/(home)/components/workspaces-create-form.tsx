@@ -12,12 +12,14 @@ import instance from "@/app/server/utils/axios-instance";
 import { schemaWorkspaces } from "@/app/libs/joi/schemas";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { FormWorkspacesValues } from "@/types/form-values";
+import { useRouter } from "next/navigation";
 
 const WorkspacesCreateForm = ({
   clickToOpenDialog,
 }: {
   clickToOpenDialog: () => void;
 }) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -36,8 +38,9 @@ const WorkspacesCreateForm = ({
     mutation.mutate(
       { name: data.name.trim() },
       {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
           queryClient.invalidateQueries(QUERY_KEY_TASKS.workspaces);
+          router.replace(`/workspaces/${data.id}`);
           clickToOpenDialog();
           notifySuccess("Nuevo proyecto agregado.");
         },

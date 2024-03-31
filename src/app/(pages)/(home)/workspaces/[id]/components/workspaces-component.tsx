@@ -13,8 +13,6 @@ import {
 } from "@material-tailwind/react";
 
 import TaskCreateForm from "./task-component/task-create-form";
-import TaskEditComponent from "../../../../../client/components/common/dialog/task-edit-form";
-import TaskDetailComponent from "../../../../../client/components/common/dialog/task-detail-component";
 import SettingsIcon from "@/app/client/components/icons/settings-icon";
 
 import instance from "@/app/server/utils/axios-instance";
@@ -22,27 +20,28 @@ import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspace
 
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
-import TasksListComponent from "./task-component/task-list-component";
-import DialogTaskComponent from "../../../../../client/components/common/dialog/dialog-tasks-component";
+import TasksListComponent from "@/app/client/components/common/tasks-list-component";
 
-const SpacesComponent = ({
-  workspaces,
-  statusList,
-  priorityList,
-}: {
-  workspaces: IWorkspaces;
-  statusList: IStatus[];
-  priorityList: IPriority[];
-}) => {
+const priorityList = [
+  { id: 1, priority: "A" },
+  { id: 2, priority: "B" },
+  { id: 3, priority: "C" },
+  { id: 4, priority: "D" },
+];
+
+const statusList = [
+  { id: 1, status: "Completado" },
+  { id: 2, status: "En desarrollo" },
+  { id: 3, status: "Pendiente" },
+  { id: 4, status: "En pausa" },
+];
+
+const SpacesComponent = ({ workspaces }: { workspaces: IWorkspaces }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
-  const [dialogToEditTasks, setDialogToEditTasks] = useState(false);
   const [dialogAddTask, setDialogAddTask] = useState(false);
-  const [dialogTaskDetail, setDialogTaskDetail] = useState(false);
-
-  const [tasksInfo, setTasksInfo] = useState<ITask | null>();
 
   const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
   const { id: workspacesId } = workspaces;
@@ -66,13 +65,6 @@ const SpacesComponent = ({
     queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
   };
 
-  const handleClickTaskDetail = (task?: any) => {
-    if (task) setTasksInfo(task);
-    setDialogToEditTasks(false);
-    setDialogTaskDetail(!dialogTaskDetail);
-  };
-
-  const handleClickEditTask = () => setDialogToEditTasks(!dialogToEditTasks);
   const handleClickAddTask = () => setDialogAddTask(!dialogAddTask);
 
   const handleClickSettings = () => {
@@ -81,16 +73,6 @@ const SpacesComponent = ({
 
   return (
     <>
-      <DialogTaskComponent
-        openDialog={dialogTaskDetail}
-        statusList={statusList}
-        priorityList={priorityList}
-        taskDetail={tasksInfo}
-        taskEdit={dialogToEditTasks}
-        handleOpenEdit={handleClickEditTask}
-        handleOpenDetail={handleClickTaskDetail}
-      />
-
       <div className="w-full px-2 pt-6">
         <div className="flex w-full flex-col gap-4 pb-2">
           <div className="flex items-center justify-between">
@@ -137,10 +119,10 @@ const SpacesComponent = ({
           </div>
         </div>
 
-        <TasksListComponent
-          openDetail={handleClickTaskDetail}
+        <TasksListComponent<ITask>
+          // openDetail={handleClickTaskDetail}
           isLoading={isLoading}
-          tasks={tasks?.tasks}
+          itemList={tasks?.tasks}
         />
       </div>
 
