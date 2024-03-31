@@ -5,20 +5,16 @@ import { useRouter } from "next/navigation";
 
 import {
   Button,
-  Card,
-  CardBody,
-  Chip,
   Dialog,
   IconButton,
   Option,
   Select,
-  Spinner,
   Typography,
 } from "@material-tailwind/react";
 
 import TaskCreateForm from "./task-component/task-create-form";
-import TaskEditComponent from "./task-component/task-edit-form";
-import TaskDetailComponent from "./task-component/task-detail-component";
+import TaskEditComponent from "../../../../../client/components/common/dialog/task-edit-form";
+import TaskDetailComponent from "../../../../../client/components/common/dialog/task-detail-component";
 import SettingsIcon from "@/app/client/components/icons/settings-icon";
 
 import instance from "@/app/server/utils/axios-instance";
@@ -27,6 +23,7 @@ import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspace
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 import TasksListComponent from "./task-component/task-list-component";
+import DialogTaskComponent from "../../../../../client/components/common/dialog/dialog-tasks-component";
 
 const SpacesComponent = ({
   workspaces,
@@ -84,38 +81,21 @@ const SpacesComponent = ({
 
   return (
     <>
-      <Dialog
-        placeholder={undefined}
-        open={dialogTaskDetail}
-        handler={handleClickTaskDetail}
-        className="z-10"
-      >
-        {tasksInfo ? (
-          dialogToEditTasks ? (
-            <TaskEditComponent
-              statusList={statusList}
-              priorityList={priorityList}
-              taskToEdit={tasksInfo}
-              handleClickTaskDetail={handleClickTaskDetail}
-              handleClickEditTask={handleClickEditTask}
-            />
-          ) : (
-            <TaskDetailComponent
-              clickToCancel={handleClickTaskDetail}
-              handleClickEditTask={handleClickEditTask}
-              tasksId={tasksInfo?.id}
-            />
-          )
-        ) : (
-          ""
-        )}
-      </Dialog>
+      <DialogTaskComponent
+        openDialog={dialogTaskDetail}
+        statusList={statusList}
+        priorityList={priorityList}
+        taskDetail={tasksInfo}
+        taskEdit={dialogToEditTasks}
+        handleOpenEdit={handleClickEditTask}
+        handleOpenDetail={handleClickTaskDetail}
+      />
 
       <div className="w-full px-2 pt-6">
         <div className="flex w-full flex-col gap-4 pb-2">
           <div className="flex items-center justify-between">
             <Typography
-              className="lg:ml-4 md:text-2xl"
+              className="md:text-2xl lg:ml-4"
               placeholder={undefined}
               variant="h6"
               color="blue-gray"
@@ -133,7 +113,7 @@ const SpacesComponent = ({
               <SettingsIcon />
             </IconButton>
           </div>
-          <div className="flex w-full flex-col items-center justify-between space-y-3 lg:space-y-0 lg:gap-4 lg:flex-row">
+          <div className="flex w-full flex-col items-center justify-between space-y-3 lg:flex-row lg:gap-4 lg:space-y-0">
             <Select
               onChange={handleSelectStatusChange}
               label="Selecciona por estado"

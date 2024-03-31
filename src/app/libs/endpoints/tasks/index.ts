@@ -1,6 +1,7 @@
 import { API_URL } from "../../enviroments";
 
 export const tasks = {
+  getAll: `${API_URL}/tasks/`,
   getAllIDs: `${API_URL}/tasks/all-ids`,
   getStatusAndPriorityList: `${API_URL}/tasks/status-priority`,
   createTask: `${API_URL}/tasks/`,
