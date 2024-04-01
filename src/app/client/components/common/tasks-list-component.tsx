@@ -69,31 +69,55 @@ export default function TasksListComponent<T>({
           handler={handleOpenDelete}
         />
       </Dialog>
-      <hr className="my-4 border-blue-gray-100" />
 
       <IsLoadingComponent isLoading={isLoading}>
         <Card
           placeholder={undefined}
-          className="my-6 h-full w-full overflow-hidden"
+          className="my-0.5 h-full w-full overflow-hidden"
         >
           <table className="w-full min-w-max table-auto text-left">
             <thead>
               <tr>
-                {TABLE_HEAD.map((head) => (
-                  <th
-                    key={head}
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-3"
+                <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-3">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                    placeholder={undefined}
                   >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                      placeholder={undefined}
-                    >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
+                    Nombre
+                  </Typography>
+                </th>
+                <th className="  hidden sm:table-cell border-b border-blue-gray-100 bg-blue-gray-50 p-3">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                    placeholder={undefined}
+                  >
+                    Estado
+                  </Typography>
+                </th>
+                <th className=" hidden sm:table-cell border-b border-blue-gray-100 bg-blue-gray-50 p-3">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                    placeholder={undefined}
+                  >
+                    Prioridad
+                  </Typography>
+                </th>
+                <th className="border-b border-blue-gray-100 bg-blue-gray-50 p-3">
+                  <Typography
+                    variant="small"
+                    color="blue-gray"
+                    className="font-normal leading-none opacity-70"
+                    placeholder={undefined}
+                  >
+                    {""}
+                  </Typography>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -132,7 +156,7 @@ export default function TasksListComponent<T>({
                             {item.name}
                           </Typography>
                         </td>
-                        <td className={classes}>
+                        <td className={`${classes} hidden sm:table-cell`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -155,7 +179,7 @@ export default function TasksListComponent<T>({
                             />
                           </Typography>
                         </td>
-                        <td className={classes}>
+                        <td className={`${classes}  hidden sm:table-cell`}>
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -165,7 +189,7 @@ export default function TasksListComponent<T>({
                             {item.priority.priority}
                           </Typography>
                         </td>
-                        <td className={classes}>
+                        <td className={`${classes} space-x-2`}>
                           <IconButton
                             size="sm"
                             variant="text"
@@ -175,8 +199,6 @@ export default function TasksListComponent<T>({
                           >
                             <TrashIcon className="w-5" />
                           </IconButton>
-                        </td>
-                        <td className={classes}>
                           <IconButton
                             size="sm"
                             variant="text"

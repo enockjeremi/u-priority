@@ -14,8 +14,6 @@ const getAllTasks = async () => {
   return res;
 };
 
-const TABLE_HEAD = ["Nombre", "Estado", "Prioridad"];
-
 const HomeComponent = () => {
   const { data, isLoading } = useQuery([QUERY_KEY_TASKS.tasks], () =>
     getAllTasks(),
@@ -80,7 +78,7 @@ const HomeComponent = () => {
           </>
         )}
       </div>
-      <div className="flex flex-col gap-4 pt-6">
+      <div className="flex flex-col gap-1 pt-4 ">
         <Typography
           variant="h6"
           color="blue-gray"
@@ -91,6 +89,15 @@ const HomeComponent = () => {
         </Typography>
 
         <TasksListComponent isLoading={isLoading} itemList={data?.update} />
+        <Typography
+          variant="h6"
+          color="blue-gray"
+          placeholder={undefined}
+          className="px-2 py-2"
+        >
+          Ultimas tareas completadas
+        </Typography>
+
         <TasksListComponent isLoading={isLoading} itemList={completed} />
       </div>
     </>
