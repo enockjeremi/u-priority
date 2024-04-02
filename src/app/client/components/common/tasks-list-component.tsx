@@ -88,7 +88,7 @@ export default function TasksListComponent<T>({
                     Nombre
                   </Typography>
                 </th>
-                <th className="  hidden sm:table-cell border-b border-blue-gray-100 bg-blue-gray-50 p-3">
+                <th className="  hidden border-b border-blue-gray-100 bg-blue-gray-50 p-3 sm:table-cell">
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -98,7 +98,7 @@ export default function TasksListComponent<T>({
                     Estado
                   </Typography>
                 </th>
-                <th className=" hidden sm:table-cell border-b border-blue-gray-100 bg-blue-gray-50 p-3">
+                <th className=" hidden border-b border-blue-gray-100 bg-blue-gray-50 p-3 sm:table-cell">
                   <Typography
                     variant="small"
                     color="blue-gray"
@@ -157,27 +157,20 @@ export default function TasksListComponent<T>({
                           </Typography>
                         </td>
                         <td className={`${classes} hidden sm:table-cell`}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                            placeholder={undefined}
-                          >
-                            <Chip
-                              size="sm"
-                              variant="ghost"
-                              value={item?.status?.status}
-                              color={
-                                item?.status?.id === 1
-                                  ? "green"
-                                  : item?.status?.id === 2
-                                    ? "blue"
-                                    : item?.status?.id === 3
-                                      ? "amber"
-                                      : "red"
-                              }
-                            />
-                          </Typography>
+                          <Chip
+                            size="sm"
+                            variant="ghost"
+                            value={item?.status?.status}
+                            color={
+                              item?.status?.id === 1
+                                ? "green"
+                                : item?.status?.id === 2
+                                  ? "blue"
+                                  : item?.status?.id === 3
+                                    ? "amber"
+                                    : "red"
+                            }
+                          />
                         </td>
                         <td className={`${classes}  hidden sm:table-cell`}>
                           <Typography

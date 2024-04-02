@@ -1,13 +1,9 @@
 "use client";
 import BasicLogo from "@/app/client/components/basic-logo";
-
 import { Card, Typography } from "@material-tailwind/react";
+import Link from "next/link";
 
-export default function SidebarComponent({
-  navList,
-}: {
-  navList: any;
-}) {
+export default function SidebarComponent({ navList }: { navList: any }) {
   return (
     <>
       <Card
@@ -15,15 +11,9 @@ export default function SidebarComponent({
         placeholder={undefined}
       >
         <div className="mb-2 p-4">
-          <Typography
-            as="a"
-            href="#"
-            variant="h6"
-            className="mr-4 cursor-pointer py-1.5"
-            placeholder={undefined}
-          >
+          <Link href="/" className="mr-4 cursor-pointer py-1.5 font-bold text-[#263238]">
             <BasicLogo />
-          </Typography>
+          </Link>
         </div>
         {navList}
       </Card>

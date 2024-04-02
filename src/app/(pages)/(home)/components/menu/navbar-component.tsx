@@ -13,6 +13,7 @@ import BasicLogo from "@/app/client/components/basic-logo";
 
 import { CloseIcon } from "@/app/client/components/icons/close-icon";
 import NavbarIcon from "@/app/client/components/icons/navbar-icon";
+import Link from "next/link";
 
 const NavbarComponent = ({ navList }: { navList: any }) => {
   const [openNav, setOpenNav] = useState<boolean>(false);
@@ -35,15 +36,12 @@ const NavbarComponent = ({ navList }: { navList: any }) => {
         placeholder={undefined}
       >
         <div className="flex items-center justify-between text-blue-gray-900">
-          <Typography
-            as="a"
-            href="#"
-            variant="h6"
-            className="mr-4 cursor-pointer py-1.5"
-            placeholder={undefined}
+          <Link
+            href="/"
+            className="mr-4 cursor-pointer py-1.5 font-bold text-[#263238]"
           >
             <BasicLogo />
-          </Typography>
+          </Link>
           <div className="hidden lg:block">{navList}</div>
           <IconButton
             variant="text"

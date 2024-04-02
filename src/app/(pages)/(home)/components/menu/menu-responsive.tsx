@@ -50,16 +50,19 @@ const MenuResponsive = ({ session }: { session: IUserSession }) => {
 
   const navList = (
     <List placeholder={undefined}>
-      <ListItem
-        selected={pathname === "/profile"}
-        placeholder={undefined}
-        className="text-sm"
-      >
-        <ListItemPrefix placeholder={undefined}>
-          <UserIcon className="w-5" />
-        </ListItemPrefix>
-        <span className="first-letter:uppercase">{session.username}</span>
-      </ListItem>
+      <Link href={"/profile"}>
+        <ListItem
+          selected={pathname === "/profile"}
+          placeholder={undefined}
+          className="text-sm"
+        >
+          <ListItemPrefix placeholder={undefined}>
+            <UserIcon className="w-5" />
+          </ListItemPrefix>
+          <span className="first-letter:uppercase">{session.username}</span>
+        </ListItem>
+      </Link>
+
       <Link href={"/"}>
         <ListItem
           selected={pathname === "/"}
