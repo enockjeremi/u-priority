@@ -50,19 +50,6 @@ const MenuResponsive = ({ session }: { session: IUserSession }) => {
 
   const navList = (
     <List placeholder={undefined}>
-      <Link href={"/profile"}>
-        <ListItem
-          selected={pathname === "/profile"}
-          placeholder={undefined}
-          className="text-sm"
-        >
-          <ListItemPrefix placeholder={undefined}>
-            <UserIcon className="w-5" />
-          </ListItemPrefix>
-          <span className="first-letter:uppercase">{session.username}</span>
-        </ListItem>
-      </Link>
-
       <Link href={"/"}>
         <ListItem
           selected={pathname === "/"}
@@ -120,7 +107,20 @@ const MenuResponsive = ({ session }: { session: IUserSession }) => {
         )}
       </IsLoadingComponent>
 
-      <hr className="my-2 border-blue-gray-50" />
+      <hr className="mt-8 mb-2 border-blue-gray-50" />
+
+      <Link href={"/profile"}>
+        <ListItem
+          selected={pathname === "/profile"}
+          placeholder={undefined}
+          className="text-sm"
+        >
+          <ListItemPrefix placeholder={undefined}>
+            <UserIcon className="w-5" />
+          </ListItemPrefix>
+          <span className="first-letter:uppercase">{session.username}</span>
+        </ListItem>
+      </Link>
       <ListItem onClick={onSignOut} placeholder={undefined} className="text-sm">
         <ListItemPrefix placeholder={undefined}>
           <LogOutIcon className="w-5" />

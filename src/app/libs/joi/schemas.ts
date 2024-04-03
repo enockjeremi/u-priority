@@ -26,7 +26,15 @@ export const schemaSignUp = Joi.object({
   cpassword: Joi.any().valid(Joi.ref("password")).required().messages(esErrors),
 });
 
-
 export const schemaWorkspaces = Joi.object({
   name: Joi.string().min(4).required().messages(esErrors),
+});
+
+export const schemaChangePassword = Joi.object({
+  old_password: Joi.string().required().min(7).messages(esErrors),
+  new_password: Joi.string().required().min(7).messages(esErrors),
+  cnew_password: Joi.any()
+    .valid(Joi.ref("new_password"))
+    .required()
+    .messages(esErrors),
 });
