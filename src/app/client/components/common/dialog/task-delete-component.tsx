@@ -7,10 +7,10 @@ import React from "react";
 import { useMutation, useQueryClient } from "react-query";
 
 const TaskDeleteComponent = ({
-    taskDelete,
+  taskDelete,
   handler,
 }: {
-    taskDelete: any;
+  taskDelete: any;
   handler: () => void;
 }) => {
   const mutation = useMutation(
@@ -23,11 +23,10 @@ const TaskDeleteComponent = ({
   );
 
   const queryClient = useQueryClient();
-
   const handleClickDeleteTask = (tasksId: number | undefined) => {
     mutation.mutate(tasksId, {
       onSuccess: () => {
-        queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
+        queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks);
         handler();
         notifySuccess("Tarea eliminada.");
       },

@@ -15,21 +15,20 @@ import TaskEditForm from "./dialog/task-edit-form";
 import TaskDeleteComponent from "./dialog/task-delete-component";
 import IsLoadingComponent from "./is-loading-component";
 
-const TABLE_HEAD = ["Nombre", "Estado", "Prioridad", "Eliminar", "Modificar"];
-
 export default function TasksListComponent<T>({
   itemList,
   isLoading,
 }: {
-  itemList: Array<T> | undefined;
+  itemList: ITask[] | undefined;
   isLoading: boolean;
 }) {
-  const [taskDetail, setTaskDetail] = useState<ITask>();
+  const [taskDetail, setTaskDetail] = useState<ITask | null>(null);
+
   const [openDetail, setOpenDetail] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  function handleOpenDetail(task: any) {
+  function handleOpenDetail(task: ITask | null) {
     setTaskDetail(task);
     setOpenDetail(!openDetail);
   }
@@ -51,11 +50,17 @@ export default function TasksListComponent<T>({
         open={openDetail}
         handler={handleOpenDetail}
       >
-        <TaskDetailComponent tasksId={taskDetail?.id} />
+        <TaskDetailComponent
+          task={taskDetail}
+          handler={() => setOpenDetail(false)}
+        />
       </Dialog>
 
       <Dialog placeholder={undefined} open={openEdit} handler={handleOpenEdit}>
-        <TaskEditForm taskToEdit={taskDetail} handler={handleOpenEdit} />
+        <TaskEditForm
+          taskToEdit={taskDetail}
+          handler={() => setOpenEdit(false)}
+        />
       </Dialog>
 
       <Dialog
@@ -66,7 +71,7 @@ export default function TasksListComponent<T>({
       >
         <TaskDeleteComponent
           taskDelete={taskDetail}
-          handler={handleOpenDelete}
+          handler={() => setOpenDelete(false)}
         />
       </Dialog>
 

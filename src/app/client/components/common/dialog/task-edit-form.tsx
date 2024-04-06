@@ -56,7 +56,7 @@ const TaskEditForm = ({
   taskToEdit,
   handler,
 }: {
-  taskToEdit: ITask | undefined;
+  taskToEdit: ITask | null;
   handler: () => void;
 }) => {
   const {
@@ -85,7 +85,6 @@ const TaskEditForm = ({
       { name, description, statusid, priorityid },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
           queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks);
           handler();
           notifySuccess("Tarea modificada");
@@ -112,7 +111,7 @@ const TaskEditForm = ({
           color="blue-gray"
           size="sm"
           variant="text"
-          // onClick={handleClickEditTask}
+          onClick={handler}
         >
           <CloseIcon />
         </IconButton>

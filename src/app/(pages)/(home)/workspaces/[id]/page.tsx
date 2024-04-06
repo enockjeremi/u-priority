@@ -4,26 +4,29 @@ import { cookies } from "next/headers";
 
 import React from "react";
 import WorkspacesComponent from "./components/workspaces-component";
-import { status } from "@/app/libs/endpoints/status";
 import axios from "axios";
-import { priority } from "@/app/libs/endpoints/priority";
+import NotFound from "@/app/not-found";
+import Error from "./error";
 
 const getWorkspaces = async (id: number, token: any) => {
-  const res = await axios
-    .get(workspaces.getBy(id), {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((res) => res.data);
-  return res;
+  try {
+    const res = await axios
+      .get(workspaces.getBy(id), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => res.data);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const Page = async ({ params }: { params: any }) => {
   const token = cookies().get(USER_TOKEN_NAME)?.value;
-
   const workspaces = await getWorkspaces(params.id, token);
-
+  if (!workspaces) return <Error />;
   return <WorkspacesComponent workspaces={workspaces} />;
 };
 

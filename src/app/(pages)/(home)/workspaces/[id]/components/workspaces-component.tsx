@@ -16,8 +16,7 @@ import TaskCreateForm from "./task-component/task-create-form";
 import SettingsIcon from "@/app/client/components/icons/settings-icon";
 
 import instance from "@/app/server/utils/axios-instance";
-import { workspaces as workSpacesEndpoint } from "@/app/libs/endpoints/workspaces";
-
+import { tasks } from "@/app/libs/endpoints/tasks";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import { IPriority, IStatus, ITask, IWorkspaces } from "@/types/workspaces";
 import TasksListComponent from "@/app/client/components/common/tasks-list-component";
@@ -37,32 +36,28 @@ const statusList = [
 ];
 
 const SpacesComponent = ({ workspaces }: { workspaces: IWorkspaces }) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
 
-  const [selectTasksByStatus, setSelectTasksByStatus] = useState<number>(0);
+  const [status, setStatus] = useState<number>(0);
   const [dialogAddTask, setDialogAddTask] = useState(false);
 
   const allStatusList = [{ id: 0, status: "Todas las tareas" }, ...statusList];
   const { id: workspacesId } = workspaces;
 
-  const { data: tasks, isLoading } = useQuery<IWorkspaces>({
-    queryKey: [
-      QUERY_KEY_TASKS.tasks_list,
-      { workspacesId, selectTasksByStatus },
-    ],
+  const { data, isLoading } = useQuery<ITask[]>({
+    queryKey: [QUERY_KEY_TASKS.tasks, { workspacesId }],
     queryFn: async () => {
       return await instance
-        .get(
-          workSpacesEndpoint.filterByStatus(workspacesId, selectTasksByStatus),
-        )
+        .get(tasks.getTaskByWorkspaces(workspacesId))
         .then((res) => res.data);
     },
   });
 
+  const tasksList =
+    status !== 0 ? data?.filter((items) => items.status.id === status) : data;
+
   const handleSelectStatusChange = (value: any) => {
-    setSelectTasksByStatus(Number(value));
-    queryClient.invalidateQueries(QUERY_KEY_TASKS.tasks_list);
+    setStatus(Number(value));
   };
 
   const handleClickAddTask = () => setDialogAddTask(!dialogAddTask);
@@ -122,7 +117,7 @@ const SpacesComponent = ({ workspaces }: { workspaces: IWorkspaces }) => {
         <TasksListComponent<ITask>
           // openDetail={handleClickTaskDetail}
           isLoading={isLoading}
-          itemList={tasks?.tasks}
+          itemList={tasksList}
         />
       </div>
 

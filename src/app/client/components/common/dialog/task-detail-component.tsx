@@ -15,22 +15,17 @@ import instance from "@/app/server/utils/axios-instance";
 import { tasks } from "@/app/libs/endpoints/tasks";
 
 import IsLoadingComponent from "@/app/client/components/common/is-loading-component";
+import { ITask } from "@/types/workspaces";
 
-const getTasksById = (id: number | undefined) => {
-  if (!id) return null;
-  const res = instance.get(tasks.getById(id)).then((res) => res.data);
-  return res;
-};
-
-const TaskDetailComponent = ({ tasksId }: { tasksId: number | undefined }) => {
-  const { data: task, isLoading } = useQuery(
-    ["task", tasksId],
-    () => getTasksById(tasksId),
-    { retry: 0 },
-  );
-
+const TaskDetailComponent = ({
+  task,
+  handler,
+}: {
+  task: ITask | null;
+  handler: () => void;
+}) => {
   return (
-    <IsLoadingComponent isLoading={isLoading}>
+    <>
       <DialogHeader
         placeholder={undefined}
         className="flex items-center justify-between"
@@ -41,7 +36,7 @@ const TaskDetailComponent = ({ tasksId }: { tasksId: number | undefined }) => {
           variant="h5"
           color="blue-gray"
         >
-          {task?.name || ""}
+          {task?.name}
         </Typography>
         <IconButton
           placeholder={undefined}
@@ -49,7 +44,7 @@ const TaskDetailComponent = ({ tasksId }: { tasksId: number | undefined }) => {
           size="sm"
           variant="text"
           className="w-[20%]"
-          // onClick={clickToCancel}
+          onClick={handler}
         >
           <CloseIcon />
         </IconButton>
@@ -57,14 +52,14 @@ const TaskDetailComponent = ({ tasksId }: { tasksId: number | undefined }) => {
       <DialogBody placeholder={undefined}>
         <div className="flex flex-col justify-between gap-8">
           <Typography placeholder={undefined} color="gray" variant="paragraph">
-            {task?.description || ""}
+            {task?.description}
           </Typography>
           <div>
             <div className="flex items-center justify-between">
-              <Chip size="md" value={task?.status.status || ""} />
+              <Chip size="md" value={task?.status.status} />
               <Chip
                 size="md"
-                value={task?.priority.priority || ""}
+                value={task?.priority.priority}
                 color={
                   task?.priority.id === 1
                     ? "green"
@@ -79,7 +74,7 @@ const TaskDetailComponent = ({ tasksId }: { tasksId: number | undefined }) => {
           </div>
         </div>
       </DialogBody>
-    </IsLoadingComponent>
+    </>
   );
 };
 

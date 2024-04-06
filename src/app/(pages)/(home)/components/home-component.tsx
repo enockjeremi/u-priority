@@ -1,5 +1,4 @@
 "use client";
-import IsLoadingComponent from "@/app/client/components/common/is-loading-component";
 import { tasks } from "@/app/libs/endpoints/tasks";
 import { QUERY_KEY_TASKS } from "@/app/server/constants/query-keys";
 import instance from "@/app/server/utils/axios-instance";
@@ -19,7 +18,7 @@ const HomeComponent = () => {
     getAllTasks(),
   );
 
-  const completed = data?.filter
+  const completed = data
     ?.filter((item: any) => item.status.id === 1)
     .slice(0, 4);
 
@@ -28,6 +27,7 @@ const HomeComponent = () => {
 
   const clickToOpenDialog = () =>
     setOpenDialogWorkspaces(!openDialogWorkspaces);
+    
   return (
     <>
       <Dialog
@@ -43,7 +43,7 @@ const HomeComponent = () => {
         </Typography>
         <hr className="my-2 border-blue-gray-100" />
 
-        {data?.all?.length === 0 ? (
+        {data?.length === 0 ? (
           <>
             <Typography
               variant="paragraph"
@@ -88,7 +88,7 @@ const HomeComponent = () => {
           Ultimas tareas actualizadas
         </Typography>
 
-        <TasksListComponent isLoading={isLoading} itemList={data?.update} />
+        <TasksListComponent isLoading={isLoading} itemList={data?.slice(0, 3)} />
         <Typography
           variant="h6"
           color="blue-gray"
