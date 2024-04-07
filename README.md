@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# U-Priority
 
-## Getting Started
+Sideproject creado con la intención de mejorar mis conocimientos en desarrollo web, principalmente en NextJS (Frontend) y NestJS (Backend)
 
-First, run the development server:
+Este repositorio es el frontend de la aplicación, está desarrollada con NextJS y su APP Router.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Instalacion
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Si deseas probar el proyecto, es necesario que antes instales la API que está en mi perfil.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+En el repositorio de la API tendrás las instrucciones de su respectiva instalación.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Luego de haber instalado la API y haberla dejado en funcionamiento, clona el repositorio e instala las dependencias.
 
-## Learn More
+Es necesario que crees un archivo .env y copies la dirección de local de la API.
 
-To learn more about Next.js, take a look at the following resources:
+Tendrás una archivo .env.example que te dará la referencia necesaria.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Recursos utilizados
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Los recursos o librerias que use en este proyecto son:
 
-## Deploy on Vercel
+- TailwindCss (Maquetación general)
+- Material Tailwind IU (Componentes en general)
+- React Hook Form (Para todo lo que son formularios)
+- Joi con su Resolver para React Hook Form (Validación de formularios)
+- Axios (Gestión general de lo que son los fetch a la api)
+- React Query - TanStack (Para la manejar las peticiones de forma más didáctica)
+- React Toastify (Para el manejo de notificaciones)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Autor
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [@enockjeremi](https://www.github.com/enockjeremi)
+
+## Demo
+
+Dentro del repositorio hay una carpeta llamada responsive-images, donde tendrás algunas capturas de como se ve el proyecto en ejecución.
