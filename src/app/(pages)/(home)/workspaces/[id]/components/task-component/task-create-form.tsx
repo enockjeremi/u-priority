@@ -51,11 +51,7 @@ export default function TaskCreateForm({
     formState: { errors },
   } = useForm<FormTaskValues>({
     defaultValues: {
-      name: "Tarea de prueba",
-      description:
-        "Support this project with your organization. Your logo will show up here with a link to your website.",
-      statusid: "3",
-      priorityid: "1",
+      statusid: "2",
     },
     resolver: joiResolver(schemaTask),
   });
